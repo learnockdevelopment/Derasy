@@ -19,15 +19,7 @@ export async function GET(req) {
     }
 
     return NextResponse.json({
-      user: {
-        id: userData._id,
-        name: userData.name,
-        email: userData.email,
-        role: userData.role,
-        emailVerified: userData.emailVerified,
-        createdAt: userData.createdAt,
-        // Add more fields if needed
-      }
+      user: userData
     });
   } catch (error) {
     console.error('❌ Error fetching user info:', error);

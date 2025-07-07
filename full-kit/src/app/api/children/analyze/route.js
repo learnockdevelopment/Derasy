@@ -5,9 +5,10 @@ import User from '@/models/User';
 import { authenticate } from '@/middlewares/auth';
 import nodemailer from 'nodemailer';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { marked } from 'marked'; // ✅ convert markdown to HTML
+import { marked } from 'marked';
+import { withLogging } from '@/middlewares/logger'; // ✅ Import middleware
 
-export async function POST(req) {
+async function handler(req) {
   try {
     await dbConnect();
     const user = await authenticate(req);
@@ -36,38 +37,21 @@ export async function POST(req) {
     const geminiResponse = await result.response;
     const aiAnalysis = geminiResponse.text();
 
-    const htmlContent = marked(aiAnalysis); // ✅ Markdown to HTML
+    const htmlContent = marked(aiAnalysis);
 
     const emailHtml = `
-  <div style="font-family: 'Cairo', 'Tahoma', 'Arial', sans-serif; background: #f4f4f4; padding: 20px; direction: rtl; text-align: right;">
-    <div style="max-width: 100%; margin: auto; background: white; border-radius: 12px; padding: 20px 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); animation: fadeIn 1s ease-out;">
-      <h2 style="text-align: center; color: #2c3e50;">📊 تحليل بيانات أطفالك</h2>
-      <p style="text-align: center;">🔍 هذا هو التحليل الخاص بأطفالك بناءً على البيانات المدخلة.</p>
-
-      <div style="background: #ecf0f1; padding: 20px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="color: #0984e3;">💡 التوصيات:</h3>
-        <div style="font-size: 15px; color: #2d3436; line-height: 1.8;">${htmlContent}</div>
+      <div style="font-family: 'Cairo'; background: #f4f4f4; padding: 20px; direction: rtl; text-align: right;">
+        <div style="background: white; border-radius: 12px; padding: 20px 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+          <h2 style="text-align: center;">📊 تحليل بيانات أطفالك</h2>
+          <p style="text-align: center;">🔍 هذا هو التحليل الخاص بأطفالك.</p>
+          <div style="background: #ecf0f1; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #0984e3;">💡 التوصيات:</h3>
+            <div>${htmlContent}</div>
+          </div>
+          <p style="text-align: center;">📌 سنرسل لك المزيد من الترشيحات خلال الفترة القادمة بناءً على تحليلاتنا.</p>
+        </div>
       </div>
-
-      <p style="font-size: 14px; color: #636e72; text-align: center;">📌 سنرسل لك المزيد من الترشيحات خلال الفترة القادمة بناءً على تحليلاتنا.</p>
-
-      <div style="text-align: center; margin-top: 40px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/201/201623.png" width="60" alt="Success Icon" />
-        <p style="font-size: 12px; color: #b2bec3; margin-top: 10px;">
-          &copy; ${new Date().getFullYear()} منصة تقديم المدارس | جميع الحقوق محفوظة
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-`;
-
+    `;
 
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
@@ -92,3 +76,6 @@ export async function POST(req) {
     return Response.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
   }
 }
+
+// ✅ Export with logging
+export const POST = withLogging(handler);

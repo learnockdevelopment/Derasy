@@ -10,7 +10,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <a href="/pages/admission/children" className="block text-gray-700 hover:text-blue-600">🏠 الرئيسية</a>
           <a href="/pages/admission/children/my" className="block text-gray-700 hover:text-blue-600">👶 الأطفال</a>
           <a href="/pages/admission/children/my/analysis" className="block text-gray-700 hover:text-blue-600">🧠 تحليل الذكاء الاصطناعي</a>
-          <a href="/dashboard/schools" className="block text-gray-700 hover:text-blue-600">🏫 المدارس</a>
+          <a href="/pages/admission/children/my/suggestions" className="block text-gray-700 hover:text-blue-600">🧠 اقتراحات الذكاء الاصطناعي</a>
+          <a href="/pages/admission/schools" className="block text-gray-700 hover:text-blue-600">🏫 المدارس</a>
           <a href="/pages/admission/me" className="block text-gray-700 hover:text-blue-600">⚙️ الإعدادات</a>
         </nav>
       </aside>
@@ -27,7 +28,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <main className="p-6 flex-1 overflow-y-auto">{children}</main>
 
         {/* Footer */}
-        <footer className="bg-white shadow-inner py-4 px-6 text-center text-sm text-gray-500">
+        <footer className="bg-white shadow-inner py-4 px-6 text-center text-sm text-gray-500 sticky bottom-0 z-10">
           © {new Date().getFullYear()} منصة تقديم المدارس – جميع الحقوق محفوظة.
         </footer>
       </div>
