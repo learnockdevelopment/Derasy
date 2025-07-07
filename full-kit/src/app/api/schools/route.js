@@ -1,7 +1,7 @@
 // === app/api/schools/route.js ===
 import { dbConnect } from '@/lib/dbConnect';
 import School from '@/models/School';
-import { authenticate } from '@/middleware/auth';
+import { authenticate } from '@/middlewares/auth';
 
 export async function POST(req) {
   await dbConnect();

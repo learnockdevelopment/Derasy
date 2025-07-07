@@ -1,6 +1,6 @@
 import { dbConnect } from '@/lib/dbConnect';
 import Application from '@/models/Application';
-import { authenticate } from '@/middleware/auth';
+import { authenticate } from '@/middlewares/auth';
 
 export async function POST(req) {
   await dbConnect();
