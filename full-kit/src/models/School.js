@@ -1,0 +1,65 @@
+// models/School.js
+import mongoose from "mongoose";
+
+const schoolSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  slug: { type: String, unique: true }, // e.g. for URL: /schools/al-noor-international
+
+  type: {
+    type: String,
+    enum: ["Public", "Private", "International", "National", "Experimental", "Language"],
+    required: true
+  },
+
+  ownership: {
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    moderators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
+  },
+
+  branches: [{
+    name: String,
+    governorate: String,
+    zone: String,
+    address: String,
+    contactEmail: String,
+    contactPhone: String,
+    coordinates: {
+      lat: Number,
+      lng: Number
+    },
+    facilities: [String], // e.g. ["Sports Hall", "Library", "Bus Service"]
+  }],
+
+  gradesOffered: [String], // e.g. ["KG1", "KG2", "Primary 1", ...]
+  ageRequirement: {
+    KG1: Number,
+    KG2: Number,
+    Primary1: Number
+  },
+
+  languages: [String], // e.g. ["Arabic", "English", "French"]
+  isReligious: Boolean,
+  religionType: { type: String, enum: ["Muslim", "Christian", "Mixed", "Other"] },
+  supportsSpecialNeeds: Boolean,
+
+  admissionOpen: { type: Boolean, default: true },
+  admissionFee: {
+    amount: { type: Number, required: true },
+    currency: { type: String, default: "EGP" },
+    isRefundable: { type: Boolean, default: false }
+  },
+
+  documentsRequired: [String], // e.g. ["Birth Certificate", "Vaccination Card"]
+
+  feesRange: {
+    min: Number,
+    max: Number
+  },
+
+  logoUrl: String,
+  website: String,
+  approved: { type: Boolean, default: false }, // platform admin approval
+
+}, { timestamps: true });
+
+export default mongoose.models.School || mongoose.model("School", schoolSchema);
