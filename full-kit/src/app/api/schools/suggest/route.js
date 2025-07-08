@@ -60,7 +60,7 @@ async function handler(req) {
           <div style="text-align: center; margin-top: 40px;">
             <img src="https://cdn-icons-png.flaticon.com/512/201/201623.png" width="60" alt="Success Icon" />
             <p style="font-size: 12px; color: #b2bec3; margin-top: 10px;">
-              &copy; ${new Date().getFullYear()} منصة تقديم المدارس | جميع الحقوق محفوظة
+              &copy; ${new Date().getFullYear()} منصة دراسي | جميع الحقوق محفوظة
             </p>
           </div>
         </div>

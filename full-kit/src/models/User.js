@@ -16,12 +16,6 @@ const userSchema = new mongoose.Schema({
   wallet: {
     balance: { type: Number, default: 0 },
     currency: { type: String, default: "EGP" },
-    transactions: [{
-      type: { type: String, enum: ["deposit", "withdrawal", "payment", "refund"] },
-      amount: Number,
-      date: { type: Date, default: Date.now },
-      description: String
-    }]
 
   },
   emailVerified: { type: Boolean, default: false },

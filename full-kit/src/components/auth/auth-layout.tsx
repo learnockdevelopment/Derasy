@@ -33,7 +33,7 @@ export function Auth({
   return (
     <section
       className={cn(
-        "container min-h-screen w-full flex justify-between px-0",
+        "min-h-screen w-full flex justify-between px-0",
         className
       )}
       {...props}

@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/children/route.js", "src/middlewares/auth.js", "src/app/[lang]/(plain-layout)/pages/admission/children/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/children/route.js", "src/middlewares/auth.js", "src/app/[lang]/(plain-layout)/pages/admission/children/page1.jsx", "src/app/[lang]/(plain-layout)/pages/admission/layout.jsx", "src/lib/sendEmail.js", "src/app/[lang]/(plain-layout)/pages/admission/schools/apply/page.jsx"],
   "exclude": ["node_modules"]
 }

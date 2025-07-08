@@ -51,7 +51,7 @@ export async function POST(req) {
         <p style="font-size: 12px; color: #aaa; text-align: center;">
           إذا لم تقم بطلب هذا، يمكنك تجاهل هذه الرسالة.
         </p>
-        <p style="font-size: 12px; color: #bbb; text-align: center;">© ${new Date().getFullYear()} منصة تقديم المدارس</p>
+        <p style="font-size: 12px; color: #bbb; text-align: center;">© ${new Date().getFullYear()} منصة دراسي</p>
       </div>
     `;
 

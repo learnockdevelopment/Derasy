@@ -1,7 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import {
+  Loader2,
+  Baby,
+  Calendar,
+  GraduationCap,
+  School,
+  MapPin,
+  Clock,
+  User,
+} from 'lucide-react';
+import LoadingLottie from '@/components/lottie';
 import Swal from 'sweetalert2';
 
 export default function ParentChildrenPage() {
@@ -52,50 +62,78 @@ export default function ParentChildrenPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-gradient-to-tr from-pink-50 via-purple-50 to-blue-50 rounded-xl shadow-xl mt-8 font-[Cairo]">
-      <h1 className="text-3xl font-bold mb-6 text-center text-pink-600">👶 الأطفال المسجلين</h1>
+    <div className="max-w-7xl mx-auto p-6 font-[Cairo]">
+      <h1 className="text-3xl font-bold mb-8 text-center text-pink-600 flex items-center justify-center gap-2">
+        <Baby className="w-8 h-8" /> الأطفال المسجلين
+      </h1>
 
       {children.length === 0 ? (
-        <p className="text-center text-gray-600 text-lg">🚫 لا يوجد أطفال مسجلين حاليًا.</p>
+        <p className="text-center text-gray-600 text-lg flex justify-center items-center gap-2">
+          <User className="w-5 h-5" /> لا يوجد أطفال مسجلين حاليًا.
+        </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {children.map((child) => (
             <div
-              key={child._id}
-              className="bg-white rounded-2xl p-6 shadow-md border border-gray-200 hover:shadow-xl transition-all duration-300"
-            >
-              <h2 className="text-xl font-bold mb-4 text-blue-700 text-center">🎒 {child.fullName}</h2>
-              <ul className="space-y-2 text-right text-gray-700">
-                <li>
-                  <span className="font-semibold text-purple-600">👦 الجنس:</span>{' '}
-                  {child.gender === 'male' ? 'ذكر' : 'أنثى'}
-                </li>
-                <li>
-                  <span className="font-semibold text-purple-600">🎂 تاريخ الميلاد:</span>{' '}
-                  {new Date(child.birthDate).toLocaleDateString('ar-EG')}
-                </li>
-                <li>
-                  <span className="font-semibold text-purple-600">📚 الصف المرغوب:</span>{' '}
-                  {child.desiredGrade}
-                </li>
-                {child.currentSchool && (
-                  <li>
-                    <span className="font-semibold text-purple-600">🏫 المدرسة الحالية:</span>{' '}
-                    {child.currentSchool}
-                  </li>
-                )}
-                {child.zone && (
-                  <li>
-                    <span className="font-semibold text-purple-600">📍 المنطقة:</span>{' '}
-                    {child.zone}
-                  </li>
-                )}
-                <li>
-                  <span className="font-semibold text-purple-600">🕒 تاريخ التسجيل:</span>{' '}
-                  {new Date(child.createdAt).toLocaleDateString('ar-EG')}
-                </li>
-              </ul>
-            </div>
+  key={child._id}
+  className="relative rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 text-white group transition-transform hover:scale-[1.015]"
+>
+  {/* Inner glass layer */}
+  <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-xl z-0" />
+
+  <div className="relative z-10 flex flex-col justify-between p-5 space-y-4 min-h-[300px]">
+    <div className="text-center border-b border-white/30 pb-2">
+      <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
+        <User className="w-6 h-6" /> {child.fullName}
+      </h2>
+      <p className="text-sm text-white/80 mt-1">
+        {child.gender === 'male' ? 'ذكر' : 'أنثى'}
+      </p>
+    </div>
+
+    <ul className="text-sm space-y-3 text-white">
+      <li className="flex items-center justify-between border-b border-white/10 pb-1">
+        <span className="flex items-center gap-2">
+          <Calendar className="w-4 h-4" /> تاريخ الميلاد
+        </span>
+        <span>{new Date(child.birthDate).toLocaleDateString('ar-EG')}</span>
+      </li>
+
+      <li className="flex items-center justify-between border-b border-white/10 pb-1">
+        <span className="flex items-center gap-2">
+          <GraduationCap className="w-4 h-4" /> الصف المرغوب
+        </span>
+        <span>{child.desiredGrade}</span>
+      </li>
+
+      {child.currentSchool && (
+        <li className="flex items-center justify-between border-b border-white/10 pb-1">
+          <span className="flex items-center gap-2">
+            <School className="w-4 h-4" /> المدرسة الحالية
+          </span>
+          <span>{child.currentSchool}</span>
+        </li>
+      )}
+
+      {child.zone && (
+        <li className="flex items-center justify-between border-b border-white/10 pb-1">
+          <span className="flex items-center gap-2">
+            <MapPin className="w-4 h-4" /> المنطقة
+          </span>
+          <span>{child.zone}</span>
+        </li>
+      )}
+
+      <li className="flex items-center justify-between">
+        <span className="flex items-center gap-2">
+          <Clock className="w-4 h-4" /> التسجيل
+        </span>
+        <span>{new Date(child.createdAt).toLocaleDateString('ar-EG')}</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
           ))}
         </div>
       )}

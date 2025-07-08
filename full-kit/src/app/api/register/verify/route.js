@@ -52,7 +52,7 @@ export async function POST(req) {
     <div style="background: #f8f9fa; padding: 40px 20px; font-family: 'Cairo', sans-serif; max-width: 600px; margin: auto; border-radius: 12px; border: 1px solid #ddd;">
       <h2 style="text-align:center; color:#2ecc71;">🎉 تم تأكيد بريدك الإلكتروني بنجاح!</h2>
       <p style="font-size: 15px; text-align: center; color:#333;">
-        مرحبًا ${user.name}، لقد تم تفعيل حسابك بنجاح على <strong>منصة تقديم المدارس</strong>.
+        مرحبًا ${user.name}، لقد تم تفعيل حسابك بنجاح على <strong>منصة دراسي</strong>.
       </p>
       <div style="text-align: center; margin-top: 30px;">
         <a href="${process.env.BASE_URL}" style="
@@ -66,7 +66,7 @@ export async function POST(req) {
         ">اذهب إلى الموقع</a>
       </div>
       <p style="text-align: center; font-size: 12px; color: #999; margin-top: 30px;">
-        © ${new Date().getFullYear()} منصة تقديم المدارس. جميع الحقوق محفوظة.
+        © ${new Date().getFullYear()} منصة دراسي. جميع الحقوق محفوظة.
       </p>
     </div>
   `;

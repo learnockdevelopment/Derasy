@@ -1,4 +1,4 @@
-import type { DictionaryType } from "@/lib/get-dictionary"
+import type { DictionaryType } from "@/lib/get-dictionary";
 
 import {
   Auth,
@@ -6,24 +6,25 @@ import {
   AuthForm,
   AuthHeader,
   AuthTitle,
-} from "./auth-layout"
-import { SignInForm } from "./sign-in-form"
+} from "./auth-layout";
+
+import { SignInForm } from "./sign-in-form";
 
 export function SignIn({ dictionary }: { dictionary: DictionaryType }) {
   return (
     <Auth
-      imgSrc="/images/illustrations/misc/welcome.svg"
+      imgSrc="/images/school.jpg" // Replace with your branded image
       dictionary={dictionary}
     >
       <AuthHeader>
-        <AuthTitle>Sign In</AuthTitle>
+        <AuthTitle>تسجيل الدخول إلى دراسي</AuthTitle>
         <AuthDescription>
-          Enter your email below to sign in to your account
+          أدخل بريدك الإلكتروني وكلمة المرور للدخول إلى منصة دراسي لتقديم المدارس
         </AuthDescription>
       </AuthHeader>
       <AuthForm>
         <SignInForm />
       </AuthForm>
     </Auth>
-  )
+  );
 }

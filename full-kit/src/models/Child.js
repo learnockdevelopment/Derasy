@@ -1,4 +1,3 @@
-// models/Child.js
 import mongoose from "mongoose";
 
 const childSchema = new mongoose.Schema({
@@ -30,6 +29,22 @@ const childSchema = new mongoose.Schema({
   },
 
   zone: { type: String }, // e.g. "Nasr City", "6 October"
+
+  // ✅ New field: Profile image
+  profileImage: {
+    url: { type: String },
+    publicId: { type: String }, // useful if using Cloudinary to delete/update
+  },
+
+  // ✅ Optional: Additional documents (array of images)
+  documents: [
+    {
+      url: { type: String },
+      publicId: { type: String },
+      label: { type: String } // e.g., "Vaccination Card", "Birth Certificate"
+    }
+  ],
+
 }, { timestamps: true });
 
 export default mongoose.models.Child || mongoose.model("Child", childSchema);

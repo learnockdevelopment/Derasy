@@ -6,9 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
 import type { LocaleType, NewPasswordFormType } from "@/types"
-
 import { NewPasswordSchema } from "@/schemas/new-passward-schema"
-
 import { ensureLocalizedPathname } from "@/lib/i18n"
 import { ensureRedirectPathname } from "@/lib/utils"
 
@@ -38,50 +36,83 @@ export function NewPasswordForm() {
 
   const locale = params.lang as LocaleType
   const redirectPathname = searchParams.get("redirectTo")
+  const email = searchParams.get("email") // ⬅️ we get email from query param
   const { isSubmitting, isDirty } = form.formState
-  const isDisabled = isSubmitting || !isDirty // Disable button if form is unchanged or submitting
+  const isDisabled = isSubmitting || !isDirty
 
-  async function onSubmit(_data: NewPasswordFormType) {
-    try {
+  async function onSubmit(data: NewPasswordFormType) {
+    if (!email) {
       toast({
-        title: "Check your email",
-        description:
-          "We've sent you an email with instructions to reset your password.",
+        variant: "destructive",
+        title: "❌ لا يوجد بريد إلكتروني",
+        description: "تعذر العثور على البريد الإلكتروني لتحديث كلمة المرور.",
       })
+      return
+    }
+
+    try {
+      const res = await fetch("/api/register/reset-password/new-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          newPassword: data.password,
+        }),
+      })
+
+      const result = await res.json()
+
+      if (!res.ok) {
+        throw new Error(result.message || "فشل تحديث كلمة المرور")
+      }
+
+      toast({
+        title: "✅ تم تحديث كلمة المرور",
+        description: "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
+      })
+
+      setTimeout(() => {
+        window.location.href = ensureLocalizedPathname("/sign-in", locale)
+      }, 1500)
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Something went wrong",
-        description: error instanceof Error ? error.message : undefined,
+        title: "⚠️ حدث خطأ",
+        description:
+          error instanceof Error ? error.message : "حدث خطأ غير متوقع أثناء التحديث.",
       })
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid gap-6 font-[Cairo] text-right"
+      >
         <div className="grid gap-2">
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>كلمة المرور الجديدة</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" dir="rtl" placeholder="********" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>تأكيد كلمة المرور</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" dir="rtl" placeholder="********" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -90,19 +121,19 @@ export function NewPasswordForm() {
         </div>
 
         <ButtonLoading isLoading={isSubmitting} disabled={isDisabled}>
-          Set new password
+          تحديث كلمة المرور
         </ButtonLoading>
+
         <Link
           href={ensureLocalizedPathname(
-            // Include redirect pathname if available, otherwise default to "/sign-in"
             redirectPathname
               ? ensureRedirectPathname("/sign-in", redirectPathname)
               : "/sign-in",
             locale
           )}
-          className="-mt-4 text-center text-sm underline"
+          className="-mt-4 text-center text-sm underline text-blue-600"
         >
-          Back to Sign in
+          العودة لتسجيل الدخول
         </Link>
       </form>
     </Form>

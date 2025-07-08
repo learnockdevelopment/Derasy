@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Loader2, Mail, Shield, CheckCircle, Calendar, Wallet, User2 } from 'lucide-react';
 import Swal from 'sweetalert2';
+import Link from 'next/link';
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -79,11 +80,15 @@ export default function ProfilePage() {
             label="تاريخ التسجيل"
             value={new Date(user.createdAt).toLocaleDateString('ar-EG')}
           />
-          <ProfileCard
-            icon={<Wallet className="text-yellow-500 w-5 h-5" />}
-            label="رصيد المحفظة"
-            value={user.wallet?.balance.toLocaleString('ar-EG') + ' EGP' || '0 EGP'}
-          />
+          <Link href="/pages/admission/me/financial" passHref>
+  <div className="cursor-pointer">
+    <ProfileCard
+      icon={<Wallet className="text-yellow-500 w-5 h-5" />}
+      label="رصيد المحفظة"
+      value={user.wallet?.balance.toLocaleString('ar-EG') + ' EGP' || '0 EGP'}
+    />
+  </div>
+</Link>
         </div>
       </div>
     </div>

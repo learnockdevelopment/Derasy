@@ -67,7 +67,7 @@ export async function POST(req) {
     const emailHtml = `
       <div style="font-family: 'Cairo', sans-serif; padding: 30px; background: #f9f9f9; max-width: 600px; margin: auto; border-radius: 8px; border: 1px solid #eee;">
         <h2 style="color: #2e86de;">رمز التحقق الخاص بك</h2>
-        <p style="font-size: 16px; color: #333;">مرحبًا ${name} 👋، شكرًا لتسجيلك في منصة تقديم المدارس.</p>
+        <p style="font-size: 16px; color: #333;">مرحبًا ${name} 👋، شكرًا لتسجيلك في منصة دراسي.</p>
         <p style="font-size: 16px; color: #333;">يرجى استخدام رمز التحقق التالي لإكمال تفعيل حسابك:</p>
         <div style="text-align: center; font-size: 32px; font-weight: bold; margin: 20px 0; color: #2e86de;">${otpCode}</div>
         <p style="font-size: 14px; color: #777;">هذا الرمز صالح لمدة 10 دقائق فقط.</p>
