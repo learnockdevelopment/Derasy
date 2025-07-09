@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { signOut } from "next-auth/react"
 import { LogOut, User, UserCog } from "lucide-react"
-
+import LogoutButton from "../../app/[lang]/(plain-layout)/pages/admission/LogoutButton";
 import type { DictionaryType } from "@/lib/get-dictionary"
 import type { LocaleType } from "@/types"
 
@@ -29,6 +29,7 @@ export function UserDropdown({
   dictionary: DictionaryType
   locale: LocaleType
 }) {
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -82,7 +83,7 @@ export function UserDropdown({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => signOut()}>
-          <LogOut className="me-2 size-4" />
+          <LogoutButton/>
           {dictionary.navigation.userNav.signOut}
         </DropdownMenuItem>
       </DropdownMenuContent>
