@@ -59,12 +59,13 @@ export default function ReceivedApplicationsPage() {
   if (loading) {
   return (
     <div className="flex flex-col gap-4 h-64 justify-center items-center w-full max-w-md mx-auto">
-      <div className="w-full h-6 rounded-md bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-[shimmer_1.5s_infinite]" />
-      <div className="w-full h-4 rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-[shimmer_1.5s_infinite]" />
-      <div className="w-3/4 h-4 rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-[shimmer_1.5s_infinite]" />
+      <div className="w-full h-6 rounded-md bg-gray-200 animate-pulse" />
+      <div className="w-full h-4 rounded-md bg-gray-200 animate-pulse" />
+      <div className="w-3/4 h-4 rounded-md bg-gray-200 animate-pulse" />
     </div>
   );
 }
+
 
 
   return (
