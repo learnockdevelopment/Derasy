@@ -1,17 +1,18 @@
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import Sidebar from "./Sidebar"; // client component
 import { LandingHeader } from "../landing/_components/layout/landing-header";
-import { getDictionary } from "@/lib/get-dictionary"
+import { getDictionary } from "@/lib/get-dictionary";
 
 export default async function DashboardLayout({ children, params }) {
   const user = await getCurrentUser();
-  const dictionary = await getDictionary(params.lang)
+  const dictionary = await getDictionary(params.lang);
+
   return (
     <div className="min-h-screen flex w-full font-[Cairo]">
-      <Sidebar user={user} />
+      {user && <Sidebar user={user} />}
 
       <div className="flex-1 flex flex-col w-full">
-        <LandingHeader dictionary={dictionary} dashboard={true}/>
+        <LandingHeader dictionary={dictionary} dashboard={user ? true : false} />
 
         <main className="p-6 flex-1 overflow-y-auto">{children}</main>
 
