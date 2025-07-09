@@ -4,8 +4,6 @@ import {
   Languages,
   MailCheck,
   MonitorSmartphone,
-  PencilRuler,
-  SunMoon,
   FileCheck2,
   ListChecks,
 } from "lucide-react"
@@ -18,9 +16,9 @@ import { Iphone15Pro } from "@/components/ui/iphone-15-pro"
 
 export const coreFeaturesData: CoreFeatureType[] = [
   {
-    title: "Track Applications in Real Time",
+    title: "تتبع حالة الطلبات لحظياً",
     description:
-      "Know the status of every application instantly — no more waiting in the dark. Get notified on every change.",
+      "اعرف حالة كل طلب فوراً — لا حاجة للانتظار. يصلك إشعار عند حدوث أي تحديث.",
     icon: MailCheck,
     className: "md:[&>div]:first:basis-1/3 md:col-span-2 md:flex-row",
     header: (
@@ -38,9 +36,9 @@ export const coreFeaturesData: CoreFeatureType[] = [
     ),
   },
   {
-    title: "Mobile-Friendly Experience",
+    title: "تجربة سهلة عبر الجوال",
     description:
-      "Parents can explore schools, submit applications, and track progress — all from their phone.",
+      "يمكن لولي الأمر تصفّح المدارس وتقديم الطلبات وتتبع التقدم من خلال الهاتف بكل سهولة.",
     icon: MonitorSmartphone,
     className: "md:row-span-3 md:pb-0",
     header: (
@@ -59,29 +57,29 @@ export const coreFeaturesData: CoreFeatureType[] = [
     ),
   },
   {
-    title: "Paperless & Hassle-Free",
+    title: "بدون أوراق أو تعقيد",
     description:
-      "Upload documents once and use them for all applications. No printing, scanning, or long queues.",
+      "ارفع مستنداتك مرة واحدة فقط واستخدمها في جميع الطلبات. لا طباعة ولا مسح ضوئي.",
     icon: FileCheck2,
     className: "",
   },
   {
-    title: "Personalized School Matches",
+    title: "نتائج مدارس مخصصة لطفلك",
     description:
-      "Filter schools by fees, location, language, and special programs. Find what fits your child best.",
+      "فلتر المدارس حسب الرسوم، الموقع، اللغة، والبرامج المميزة. اختر الأنسب لطفلك.",
     icon: ListChecks,
     className: "",
   },
   {
-    title: "Multilingual & RTL Support",
+    title: "دعم متعدد اللغات والاتجاه من اليمين",
     description:
-      "Parents can use the platform in their preferred language. Arabic, English, French, and more supported.",
+      "المنصة تدعم العربية، الإنجليزية، الفرنسية، وغيرها. اختر اللغة التي تناسبك.",
     icon: Languages,
   },
   {
-    title: "Trusted & Secure Platform",
+    title: "منصة موثوقة وآمنة",
     description:
-      "We use modern encryption and privacy protocols to keep your personal data and documents safe.",
+      "نستخدم أحدث تقنيات التشفير لحماية بياناتك الشخصية ومستنداتك.",
     icon: Globe,
   },
 ]

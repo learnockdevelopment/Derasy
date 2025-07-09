@@ -1,56 +1,59 @@
 export const footerNavigationData = [
   {
-    title: "Product",
+    title: "المنتج",
     links: [
       {
-        label: "Benefits",
+        label: "الفوائد",
         href: "#benefits",
       },
       {
-        label: "Features",
+        label: "الميزات",
         href: "#features",
       },
-      { label: "Testimonials", href: "#testimonials" },
       {
-        label: "Pricing",
+        label: "آراء المستخدمين",
+        href: "#testimonials",
+      },
+      {
+        label: "الأسعار",
         href: "#pricing",
       },
       {
-        label: "FAQs",
+        label: "الأسئلة الشائعة",
         href: "#faqs",
       },
       {
-        label: "Contact Us",
+        label: "تواصل معنا",
         href: "#contact-us",
       },
     ],
   },
   {
-    title: "Resources",
+    title: "الموارد",
     links: [
-      { label: "Documentation", href: "http://localhost:3000/docs" },
-      { label: "GitHub", href: "https://github.com/Qualiora/shadboard" },
+      { label: "التوثيق", href: "http://localhost:3000/docs" },
+      { label: "جيت هاب", href: "https://github.com/Qualiora/shadboard" },
       {
-        label: "Changelog",
+        label: "سجل التغييرات",
         href: "https://github.com/Qualiora/shadboard/releases",
       },
-      { label: "Support", href: "#contact-us" },
+      { label: "الدعم الفني", href: "#contact-us" },
     ],
   },
   {
-    title: "Legal",
+    title: "قانوني",
     links: [
-      { label: "MIT License", href: "https://opensource.org/licenses/MIT" },
-      { label: "Privacy Policy", href: "" },
-      { label: "Terms of Service", href: "" },
+      { label: "رخصة MIT", href: "https://opensource.org/licenses/MIT" },
+      { label: "سياسة الخصوصية", href: "" },
+      { label: "شروط الاستخدام", href: "" },
     ],
   },
   {
-    title: "Company",
+    title: "الشركة",
     links: [
-      { label: "About", href: "" },
-      { label: "Contact", href: "#contact-us" },
-      { label: "Blog", href: "" },
+      { label: "من نحن", href: "" },
+      { label: "تواصل معنا", href: "#contact-us" },
+      { label: "المدونة", href: "" },
     ],
   },
 ]

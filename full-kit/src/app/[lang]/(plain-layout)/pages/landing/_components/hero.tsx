@@ -13,27 +13,27 @@ import { Card } from "@/components/ui/card"
 
 export function Hero() {
   return (
-    <section className="container space-y-10">
+    <section className="container space-y-10 text-right">
       <div className="grid place-items-center text-center gap-y-4">
         <SocialProofBadge />
         <h1 className="text-5xl sm:text-6xl font-black leading-tight">
-          Simplify School Admissions
+          سهّل تقديم المدارس
         </h1>
         <p className="max-w-prose w-full text-lg text-muted-foreground">
-          One platform to explore, compare, and apply to all schools. Save time, avoid paperwork, and track your application — all in one place.
+          منصة واحدة لاستكشاف المدارس، المقارنة بينها، وتقديم الطلبات. وفر وقتك، وابتعد عن الورقيات، وتتبع حالة الطلب بسهولة.
         </p>
-        <div className="flex gap-x-2">
+        <div className="flex gap-x-2 flex-wrap justify-center">
           <Link
             href="/schools"
             className={buttonVariants({ size: "lg" })}
           >
-            Browse Schools
+            تصفّح المدارس
           </Link>
           <Link
             href="/how-it-works"
             className={buttonVariants({ variant: "secondary", size: "lg" })}
           >
-            How It Works
+            كيف تعمل المنصة؟
           </Link>
         </div>
       </div>
@@ -59,8 +59,8 @@ function SocialProofBadge() {
         className="me-1.5"
         avatarClassName="h-7 w-7"
       />
-      Trusted by thousands of parents and schools
-      <ArrowRight className="h-4 w-4 transition-transform duration-200 ease-in-out ltr:group-hover:translate-x-0.5 rtl:scale-x-[-1] rtl:group-hover:-translate-x-0.5" />
+      موثوق من آلاف أولياء الأمور والمدارس
+      <ArrowRight className="h-4 w-4 transition-transform duration-200 ease-in-out rtl:group-hover:-translate-x-0.5 ltr:group-hover:translate-x-0.5 rtl:scale-x-[-1]" />
     </a>
   )
 }
@@ -74,16 +74,16 @@ function HeroImage() {
       >
         <AspectRatio ratio={16 / 9}>
           <Image
-            src="/images/misc/school-hero.png" // ✅ Replace with actual school image
-            alt="Platform preview for school admissions"
+            src="/images/misc/school-hero.png"
+            alt="معاينة منصة التقديم للمدارس"
             fill
             sizes="(max-width: 768px) 640px, 1080px"
             priority
             className="block object-cover object-top dark:hidden"
           />
           <Image
-            src="/images/misc/school-hero-dark.png" // ✅ Replace with dark version
-            alt="Platform preview for school admissions (dark)"
+            src="/images/misc/school-hero-dark.png"
+            alt="معاينة منصة التقديم للمدارس (الوضع الداكن)"
             fill
             sizes="(max-width: 768px) 640px, 1080px"
             priority

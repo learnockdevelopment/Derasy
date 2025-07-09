@@ -31,7 +31,7 @@ export function LandingHeader({ dictionary }: { dictionary: DictionaryType }) {
   }, [params, pathname])
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background border-b border-sidebar-border">
+    <header className="sticky top-0 z-50 w-full bg-background border-b border-sidebar-border" dir="rtl">
       <div className="container grid grid-cols-3 items-center gap-2 py-2.5">
         <LandingSidebar fullPathname={fullPathname} />
         <Link
@@ -43,9 +43,9 @@ export function LandingHeader({ dictionary }: { dictionary: DictionaryType }) {
             alt=""
             height={24}
             width={24}
-            className="dark:invert"
+            className="dark:invert ms-2"
           />
-          <span>Derasy</span>
+          <span>دراسي</span>
         </Link>
         <nav className="hidden lg:block">
           <ul className="place-self-center flex gap-2">
@@ -59,7 +59,7 @@ export function LandingHeader({ dictionary }: { dictionary: DictionaryType }) {
                       variant: isActive ? "secondary" : "ghost",
                     })}
                   >
-                    {nav.label}
+                    {nav.label} {/* You can also translate `nav.label` directly if not already localized */}
                   </Link>
                 </li>
               )
@@ -70,11 +70,11 @@ export function LandingHeader({ dictionary }: { dictionary: DictionaryType }) {
           <ModeDropdown dictionary={dictionary} />
           <LanguageDropdown dictionary={dictionary} />
           <Link
-            href={ensureLocalizedPathname("/register", locale)}
+            href={ensureLocalizedPathname("/sign-in", locale)}
             className={cn(buttonVariants(), "hidden lg:flex")}
           >
-            <LogIn className="me-2 h-4 w-4" />
-            <span>Register</span>
+            <LogIn className="ms-2 h-4 w-4" />
+            <span>تسجيل</span>
           </Link>
         </div>
       </div>

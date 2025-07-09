@@ -2,38 +2,38 @@ import type { FaqType } from "../types"
 
 export const faqsData: FaqType[] = [
   {
-    question: "Is the platform free to use?",
+    question: "هل المنصة مجانية للاستخدام؟",
     answer:
-      "Yes! Our platform is completely free for parents. You can browse schools, apply, and track admissions without any cost.",
+      "نعم! منصتنا مجانية تماماً لأولياء الأمور. يمكنك تصفح المدارس، وتقديم الطلبات، وتتبع حالة القبول دون أي تكلفة.",
   },
   {
-    question: "Can I apply to multiple schools at once?",
+    question: "هل يمكنني التقديم لأكثر من مدرسة في نفس الوقت؟",
     answer:
-      "Absolutely. You can submit applications to as many schools as you like—all from one account.",
+      "بكل تأكيد. يمكنك إرسال طلبات لعدد غير محدود من المدارس باستخدام حساب واحد فقط.",
   },
   {
-    question: "How do I submit the required documents?",
+    question: "كيف أقدّم المستندات المطلوبة؟",
     answer:
-      "After creating an account, you’ll be able to upload documents like birth certificates or ID directly through our secure portal.",
+      "بعد إنشاء الحساب، يمكنك رفع المستندات مثل شهادة الميلاد أو بطاقة الرقم القومي مباشرة من خلال بوابتنا الآمنة.",
   },
   {
-    question: "Will I be notified when my application status changes?",
+    question: "هل سيتم إبلاغي عند تغيير حالة طلبي؟",
     answer:
-      "Yes, you’ll receive real-time updates via email and SMS whenever your application status changes or a school responds.",
+      "نعم، ستصلك إشعارات فورية عبر البريد الإلكتروني والرسائل النصية عند حدوث أي تغيير في حالة الطلب أو الرد من المدرسة.",
   },
   {
-    question: "Is the platform available in Arabic?",
+    question: "هل المنصة متوفرة باللغة العربية؟",
     answer:
-      "Yes, the platform supports both Arabic and English, and you can switch languages anytime from the settings.",
+      "نعم، المنصة تدعم اللغتين العربية والإنجليزية، ويمكنك التبديل بينهما في أي وقت من الإعدادات.",
   },
   {
-    question: "Are my documents and data safe?",
+    question: "هل بياناتي ومستنداتي آمنة؟",
     answer:
-      "We use strong encryption and follow strict privacy protocols to keep your personal data and uploaded files secure.",
+      "نعم، نستخدم تقنيات تشفير قوية ونلتزم بسياسات خصوصية صارمة لحماية بياناتك الشخصية والمستندات المرفوعة.",
   },
   {
-    question: "Do schools see all my applications?",
+    question: "هل ترى المدارس جميع طلباتي؟",
     answer:
-      "No. Each school only sees your application submitted specifically to them. Your data is never shared without your permission.",
+      "لا، كل مدرسة يمكنها فقط رؤية الطلب المُقدم لها تحديداً. بياناتك لا يتم مشاركتها مع أي جهة دون إذنك.",
   },
 ]

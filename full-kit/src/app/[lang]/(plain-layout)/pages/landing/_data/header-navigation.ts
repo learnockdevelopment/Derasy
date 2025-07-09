@@ -1,26 +1,26 @@
 export const headerNavigationData = [
   {
-    label: "Home",
+    label: "الرئيسية",
     href: "/pages/landing",
   },
   {
-    label: "Benefits",
+    label: "الفوائد",
     href: "#benefits",
   },
   {
-    label: "Features",
+    label: "المميزات",
     href: "#features",
   },
   {
-    label: "Pricing",
+    label: "الأسعار",
     href: "#pricing",
   },
   {
-    label: "FAQs",
+    label: "الأسئلة الشائعة",
     href: "#faqs",
   },
   {
-    label: "Contact Us",
+    label: "تواصل معنا",
     href: "#contact-us",
   },
 ]
