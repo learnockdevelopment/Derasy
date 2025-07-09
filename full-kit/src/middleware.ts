@@ -28,9 +28,15 @@ function redirectWithLocale(pathname: string, request: NextRequest) {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ✅ Redirect root path `/` to `/pages/landing`
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/pages/landing", request.url));
+  }
+
   const locale = getLocaleFromPathname(pathname);
 
-  // If no locale in the path, redirect to localized version
+  // Redirect if missing locale
   if (!locale) {
     return redirectWithLocale(pathname, request);
   }
@@ -40,7 +46,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Only apply to paths that aren’t static files or API routes
+    // Apply to all non-static and non-API routes
     "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|images|docs).*)",
   ],
 };
