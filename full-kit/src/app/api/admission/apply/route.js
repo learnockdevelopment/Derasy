@@ -40,31 +40,114 @@ export async function POST(req) {
   // سجل عملية الدفع
   await Transaction.create({
     user: user.id,
-    type: 'deposit',
+    type: 'withdraw',
     amount: admissionFee,
     method: "wallet",
     description: `رسوم التقديم لمدرسة ${topSchool.name}`,
   });
+  await Transaction.create({
+    user: topSchool.ownership.owner._id, // ✅ the school owner's ID
+    type: 'hold_income',
+    amount: admissionFee,
+    method: "wallet",
+    description: `رسوم التقديم لمدرسة ${topSchool.name}`,
+  });
+// Fetch the owner user data
+const ownerUser = await User.findById(topSchool.ownership.owner._id);
+
+// Send email to parent
+await sendEmail({
+  to: parentUser.email,
+  subject: `🧾 تم خصم رسوم التقديم لمدرسة ${topSchool.name}`,
+  html: `
+    <div style="font-family: 'Cairo', sans-serif; max-width: 600px; margin: auto; background-color: #fff; padding: 24px; border-radius: 12px; border: 1px solid #eee;">
+      <h2 style="color: #dc2626;">💳 تم خصم رسوم التقديم</h2>
+      <p style="font-size: 15px; color: #333;">${parentUser.name} العزيز،</p>
+      <p style="font-size: 14px; color: #555;">
+        تم خصم مبلغ <strong>${admissionFee.toLocaleString('ar-EG')} جنيه</strong> من محفظتك لتقديم طلب إلى مدرسة <strong>${topSchool.name}</strong>.
+      </p>
+      <p style="font-size: 13px; color: #999;">مع تحيات منصة Learnock</p>
+    </div>
+  `,
+});
+
+// Send email to school owner
+await sendEmail({
+  to: ownerUser.email,
+  subject: `📥 تم إضافة طلب جديد إلى مدرستك ${topSchool.name}`,
+  html: `
+    <div style="font-family: 'Cairo', sans-serif; max-width: 600px; margin: auto; background-color: #fff; padding: 24px; border-radius: 12px; border: 1px solid #eee;">
+      <h2 style="color: #10b981;">📬 طلب تقديم جديد</h2>
+      <p style="font-size: 15px; color: #333;">${ownerUser.name} المحترم،</p>
+      <p style="font-size: 14px; color: #555;">
+        تم تقديم طلب جديد إلى مدرستك <strong>${topSchool.name}</strong> من قبل ولي الأمر <strong>${parentUser.name}</strong>.
+        وقد تم حجز مبلغ <strong>${admissionFee.toLocaleString('ar-EG')} جنيه</strong> كمعلّق حتى إتمام العملية.
+      </p>
+      <p style="font-size: 13px; color: #999;">تابع الطلبات من خلال لوحة التحكم.</p>
+    </div>
+  `,
+});
 
   // إنشاء الطلبات
   const results = [];
   for (let i = 0; i < sortedSchools.length; i++) {
-    const school = sortedSchools[i];
-    const status = i === 0 ? 'pending' : 'draft';
+  const school = sortedSchools[i];
+  const status = i === 0 ? 'pending' : 'draft';
 
-    const application = await Application.create({
-      parent: user.id,
-      child: childId,
-      school: school._id,
-      status,
-      payment: {
-        isPaid: true,
-        amount: admissionFee,
+  const application = await Application.create({
+    parent: user.id,
+    child: childId,
+    school: school._id,
+    status,
+    payment: {
+      isPaid: status === 'pending',
+      amount: status === 'pending' ? admissionFee : 0,
+    },
+    preferredInterviewSlots: [
+      {
+        date: new Date(),
+        timeRange: { from: '10:00', to: '12:00' },
       },
-    });
+    ],
+  });
 
-    results.push(application);
-  }
+  results.push(application);
+
+  // 🔔 Send email for each application
+  await sendEmail({
+    to: parentUser.email,
+    subject: status === 'pending'
+      ? `📬 تم تقديم طلبك إلى ${school.name}`
+      : `📝 تم حفظ طلبك إلى ${school.name} كمسودة`,
+    html: `
+      <div style="font-family: 'Cairo', sans-serif; max-width: 600px; margin: auto; background-color: #fff; padding: 24px; border-radius: 12px; border: 1px solid #eee;">
+        <h2 style="color: ${status === 'pending' ? '#10b981' : '#f59e0b'};">
+          ${status === 'pending' ? '✅ تم تقديم الطلب' : '📝 تم حفظ الطلب كمسودة'}
+        </h2>
+        <p style="font-size: 15px; color: #333;">
+          ${parentUser.name} العزيز،
+        </p>
+        <p style="font-size: 15px; color: #555;">
+          ${
+            status === 'pending'
+              ? `تم تقديم طلبك بنجاح إلى مدرسة <strong>${school.name}</strong> وقد تم خصم مبلغ <strong>${admissionFee.toLocaleString('ar-EG')} جنيه</strong> من محفظتك.`
+              : `تم حفظ طلبك إلى مدرسة <strong>${school.name}</strong> كمسودة ويمكنك تأكيده لاحقًا.`
+          }
+        </p>
+        <div style="margin-top: 20px;">
+          <a href="https://yourdomain.com/dashboard/applications" style="display: inline-block; background-color: #7c3aed; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
+            متابعة طلباتي
+          </a>
+        </div>
+        <hr style="margin: 30px 0;" />
+        <p style="font-size: 12px; color: #888; text-align: center;">
+          هذا البريد تم إرساله تلقائيًا. لا ترد عليه.
+        </p>
+      </div>
+    `,
+  });
+}
+
   await sendEmail({
     to: parentUser.email,
     subject: '✅ تأكيد تقديم طلبات المدارس',

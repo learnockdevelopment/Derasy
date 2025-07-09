@@ -87,36 +87,53 @@ export default function ApplicationsPage() {
           <p className="text-gray-500 text-sm">لا توجد طلبات حالياً.</p>
         ) : (
           <ul className="space-y-5">
-{applications.map((app) => (
-  <li
-    key={app._id}
-    className="bg-gray-50 p-4 rounded-xl border shadow-sm hover:bg-gray-100 transition"
-  >
-    <Link href={`/pages/admission/children/my/applications/${app._id}`} passHref>
-      <div className="flex flex-col md:flex-row justify-between gap-3 cursor-pointer">
-        <div>
-          <h4 className="text-lg font-bold text-gray-800 mb-1">
-            🏫 {app.school?.name || 'مدرسة غير معروفة'}
-          </h4>
-          <p className="text-sm text-gray-600">
-            👶 الطفل: <span className="font-semibold">{app.child?.fullName}</span>
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            📅 التقديم: {new Date(app.submittedAt).toLocaleDateString('ar-EG')}
-          </p>
+            <ul className="space-y-5">
+  {applications.map((app) => (
+    <li
+      key={app._id}
+      className="bg-gray-50 p-4 rounded-xl border shadow-sm hover:bg-gray-100 transition"
+    >
+      <Link href={`/pages/admission/children/my/applications/${app._id}`} passHref>
+        <div className="flex flex-col md:flex-row justify-between gap-3 cursor-pointer">
+          <div className="flex-1">
+            <h4 className="text-lg font-bold text-gray-800 mb-1">
+              🏫 {app.school?.name || 'مدرسة غير معروفة'}
+            </h4>
+            <p className="text-sm text-gray-600">
+              👶 الطفل: <span className="font-semibold">{app.child?.fullName}</span>
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              📅 التقديم: {new Date(app.submittedAt).toLocaleDateString('ar-EG')}
+            </p>
+
+            {app.preferredInterviewSlots?.length > 0 && (
+              <div className="mt-2 space-y-1 text-sm text-purple-700 bg-purple-50 border border-purple-200 p-2 rounded-md">
+                <p className="font-semibold">🕓 مواعيد المقابلة المقترحة:</p>
+                {app.preferredInterviewSlots.map((slot, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <span>📅 {new Date(slot.date).toLocaleDateString('ar-EG')}</span>
+                    <span>🕒 من {slot.timeRange.from}</span>
+                    <span>إلى {slot.timeRange.to}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col items-end justify-center">
+            <span className={`font-bold ${statusColors[app.status]}`}>
+              {statusLabels[app.status]}
+            </span>
+            {app.payment?.isPaid && (
+              <span className="text-green-600 text-sm mt-1">💰 تم الدفع</span>
+            )}
+          </div>
         </div>
-        <div className="flex flex-col items-end justify-center">
-          <span className={`font-bold ${statusColors[app.status]}`}>
-            {statusLabels[app.status]}
-          </span>
-          {app.payment?.isPaid && (
-            <span className="text-green-600 text-sm mt-1">💰 تم الدفع</span>
-          )}
-        </div>
-      </div>
-    </Link>
-  </li>
-))}
+      </Link>
+    </li>
+  ))}
+</ul>
+
           </ul>
         )}
       </div>

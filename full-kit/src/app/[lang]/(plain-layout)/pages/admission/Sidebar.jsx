@@ -27,8 +27,8 @@ const menu = {
   ],
 
   school_owner: [
-    { href: "/pages/owner/schools", label: "مدارسي", icon: <School className="w-5 h-5" /> },
-    { href: "/pages/owner/applications", label: "الطلبات", icon: <Inbox className="w-5 h-5" /> },
+    { href: "/pages/admission/me/schools", label: "مدارسي", icon: <School className="w-5 h-5" /> },
+    { href: "/pages/admission/me/schools/applications", label: "الطلبات", icon: <Inbox className="w-5 h-5" /> },
     { href: "/pages/admission/me", label: "الإعدادات", icon: <Settings className="w-5 h-5" /> },
   ],
   moderator: [

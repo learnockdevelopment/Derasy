@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2, Mail, Shield, CheckCircle, Calendar, Wallet, User2 } from 'lucide-react';
+import { Loader2, Shield, CheckCircle, Calendar, Wallet } from 'lucide-react';
 import Swal from 'sweetalert2';
 import Link from 'next/link';
 
@@ -50,26 +50,51 @@ export default function ProfilePage() {
       </div>
     );
   }
+const roleLabels = {
+  parent: 'ولي أمر',
+  school_owner: 'مالك مدرسة',
+  moderator: 'مشرف',
+  admin: 'مدير',
+};
+
+const roleBadgeClasses = {
+  parent: 'text-purple-600 bg-purple-50 px-2 py-1 rounded-md',
+  school_owner: 'text-blue-600 bg-blue-50 px-2 py-1 rounded-md',
+  moderator: 'text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md',
+  admin: 'text-red-600 bg-red-50 px-2 py-1 rounded-md',
+};
+
+const roleColors = {
+  parent: 'text-purple-500',
+  school_owner: 'text-blue-500',
+  moderator: 'text-yellow-500',
+  admin: 'text-red-500',
+};
 
   return (
     <div className="max-w-4xl mx-auto p-6 mt-10 font-[Cairo]">
-      <div className="bg-white shadow-lg rounded-2xl p-8 text-right">
+      <div className="bg-white shadow-2xl rounded-3xl p-10 text-right border border-purple-100">
         {/* Profile header */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center text-4xl font-bold text-purple-700">
+        <div className="flex flex-col items-center mb-10">
+          <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 text-white flex items-center justify-center text-5xl font-extrabold shadow-lg">
             {user.name?.charAt(0).toUpperCase()}
           </div>
-          <h2 className="text-2xl font-semibold mt-4">{user.name}</h2>
-          <p className="text-gray-500">{user.email}</p>
+          <h2 className="text-2xl font-bold mt-5 text-gray-800">{user.name}</h2>
+          <p className="text-sm text-gray-500">{user.email}</p>
         </div>
 
         {/* Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ProfileCard
-            icon={<Shield className="text-indigo-500 w-5 h-5" />}
+            icon={<Shield className={`w-5 h-5 ${roleColors[user.role]}`} />}
             label="الدور"
-            value={user.role === 'parent' ? 'ولي أمر' : user.role}
+            value={
+              <span className={`text-sm font-semibold ${roleBadgeClasses[user.role]}`}>
+                {roleLabels[user.role]}
+              </span>
+            }
           />
+
           <ProfileCard
             icon={<CheckCircle className="text-green-500 w-5 h-5" />}
             label="البريد مفعل"
@@ -81,14 +106,14 @@ export default function ProfilePage() {
             value={new Date(user.createdAt).toLocaleDateString('ar-EG')}
           />
           <Link href="/pages/admission/me/financial" passHref>
-  <div className="cursor-pointer">
-    <ProfileCard
-      icon={<Wallet className="text-yellow-500 w-5 h-5" />}
-      label="رصيد المحفظة"
-      value={user.wallet?.balance.toLocaleString('ar-EG') + ' EGP' || '0 EGP'}
-    />
-  </div>
-</Link>
+            <div className="cursor-pointer hover:scale-[1.02] transition-transform">
+              <ProfileCard
+                icon={<Wallet className="text-yellow-500 w-5 h-5" />}
+                label="رصيد المحفظة"
+                value={user.wallet?.balance?.toLocaleString('ar-EG') + ' جنيه' || '0 جنيه'}
+              />
+            </div>
+          </Link>
         </div>
       </div>
     </div>
@@ -97,11 +122,11 @@ export default function ProfilePage() {
 
 function ProfileCard({ icon, label, value }) {
   return (
-    <div className="bg-gray-50 border rounded-xl p-4 flex items-start gap-4 shadow-sm">
-      <div className="p-2 bg-white rounded-full shadow">{icon}</div>
+    <div className="bg-gray-50 border border-gray-200 hover:border-purple-300 rounded-2xl p-5 flex items-start gap-4 shadow-sm hover:shadow-md transition duration-300">
+      <div className="p-2 bg-white rounded-full shadow-md">{icon}</div>
       <div>
-        <p className="text-sm text-gray-500">{label}</p>
-        <p className="text-base font-semibold text-gray-800">{value}</p>
+        <p className="text-xs text-gray-500 mb-1">{label}</p>
+        <p className="text-base font-bold text-gray-800">{value}</p>
       </div>
     </div>
   );

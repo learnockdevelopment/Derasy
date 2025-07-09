@@ -1,4 +1,9 @@
 import mongoose from "mongoose";
+import '@/models/Child'; // ✅ register the schema
+import '@/models/User';  // ✅ if not already registered
+import '@/models/School'; // ✅ if not already registered
+import '@/models/Application'; // ✅ must import your main model
+
 
 const childSchema = new mongoose.Schema({
   parent: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

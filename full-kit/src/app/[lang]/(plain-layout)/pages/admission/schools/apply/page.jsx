@@ -8,6 +8,8 @@ import SelectedChildInfo from './SelectedChildInfo';
 import SchoolCard from './SchoolCard';
 import AdmissionBox from './AdmissionBox';
 import { toast } from '@/hooks/use-toast';
+import ReactMarkdown from 'react-markdown';
+import InterviewSlotSelector from './InterviewSelector'
 
 export default function AdmissionPage() {
   const [children, setChildren] = useState([]);
@@ -16,10 +18,18 @@ export default function AdmissionPage() {
   const [selectedSchools, setSelectedSchools] = useState([]);
   const [schoolSearch, setSchoolSearch] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestedMarkdown, setSuggestedMarkdown] = useState('');
+  const [suggestedIds, setSuggestedIds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [interviewSlotsMap, setInterviewSlotsMap] = useState({});
+
+
 
   const selectedChild = children.find((c) => c._id === selectedChildId);
-  const maxAdmissionFee = Math.max(...selectedSchools.map((s) => s.admissionFee?.amount || 0), 0);
+  const maxAdmissionFee = Math.max(
+    ...selectedSchools.map((s) => s?.admissionFee?.amount ?? 0),
+    0
+  );
 
   useEffect(() => {
     async function fetchData() {
@@ -58,6 +68,8 @@ export default function AdmissionPage() {
   }, []);
 
   const handleDrop = (school) => {
+    if (!school?._id || selectedSchools.some((s) => s._id === school._id)) return;
+
     if (selectedSchools.length >= 3) {
       Swal.fire({
         icon: 'warning',
@@ -66,10 +78,16 @@ export default function AdmissionPage() {
       });
       return;
     }
-    if (!selectedSchools.some((s) => s._id === school._id)) {
-      setSelectedSchools([...selectedSchools, school]);
-    }
+
+    setSelectedSchools([...selectedSchools, school]);
   };
+const updateSlotsForSchool = (schoolId, slots) => {
+  setInterviewSlotsMap((prev) => ({
+    ...prev,
+    [schoolId]: slots,
+  }));
+};
+
   const handleSuggest = async () => {
     if (!selectedChildId) {
       return toast({
@@ -117,11 +135,8 @@ export default function AdmissionPage() {
         description: 'تم تحليل بيانات الطفل بنجاح',
       });
 
-      // عرض الترشيحات في Dialog أو صفحة جديدة أو HTML Viewer
-      const win = window.open('', '_blank');
-      win.document.write(data.html);
-      win.document.close();
-
+      setSuggestedMarkdown(data.markdown || '');
+      setSuggestedIds(data.suggestedIds || []);
     } catch (error) {
       toast({
         title: 'حدث خطأ أثناء تحليل البيانات',
@@ -130,10 +145,11 @@ export default function AdmissionPage() {
       });
     }
   };
+
   const handleRemove = (id) => {
     setSelectedSchools(selectedSchools.filter((s) => s._id !== id));
   };
-  console.log(selectedSchools)
+
   const handleSubmitApplication = async () => {
     if (!selectedChild || selectedSchools.length === 0) {
       return toast({
@@ -157,7 +173,8 @@ export default function AdmissionPage() {
         body: JSON.stringify({
           childId: selectedChild._id,
           selectedSchools: selectedSchools,
-        }),
+          
+        })
       });
 
       const data = await res.json();
@@ -169,7 +186,6 @@ export default function AdmissionPage() {
         description: 'يرجى متابعة حالة الطلب من صفحة الطلبات.',
       });
 
-      // Optional: reset selected schools
       setSelectedSchools([]);
     } catch (error) {
       toast({
@@ -187,6 +203,15 @@ export default function AdmissionPage() {
       </div>
     );
   }
+
+  const sortedSchools = [...schools].sort((a, b) => {
+    const indexA = suggestedIds.indexOf(a._id);
+    const indexB = suggestedIds.indexOf(b._id);
+    if (indexA === -1 && indexB === -1) return 0;
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+  });
 
   return (
     <div className="max-w-6xl mx-auto p-6 font-[Cairo] text-right">
@@ -210,6 +235,12 @@ export default function AdmissionPage() {
               🎓 خد رأي دراسي
             </button>
           </div>
+
+          {suggestedMarkdown && (
+            <div className="my-6 p-4 border border-purple-300 bg-purple-50 rounded-lg shadow max-h-[400px] overflow-auto text-right leading-relaxed text-sm" dir="rtl">
+              <ReactMarkdown>{suggestedMarkdown}</ReactMarkdown>
+            </div>
+          )}
         </>
       )}
 
@@ -227,12 +258,14 @@ export default function AdmissionPage() {
           </div>
 
           <div className="p-4 space-y-4">
-            {schools
+            {sortedSchools
               .filter((school) =>
                 school?.name?.toLowerCase().includes(schoolSearch?.toLowerCase())
               )
               .map((school) => (
-                <SchoolCard key={school._id} school={school} />
+                <div key={school._id} className="relative">
+                  <SchoolCard school={school} suggested={suggestedIds.includes(school._id)} />
+                </div>
               ))}
           </div>
         </div>
@@ -246,8 +279,12 @@ export default function AdmissionPage() {
           />
 
           {selectedSchools.length > 0 && (
-            <div className="text-center bg-yellow-100 p-4 rounded-lg shadow-inner text-sm">
-              يجب دفع مبلغ <span className="font-bold text-red-600">{maxAdmissionFee?.toLocaleString('ar-EG')} جنيه</span> كرسوم تقديم.
+            <div dir="rtl" className="text-center bg-yellow-100 p-4 rounded-lg shadow-inner text-sm">
+              يجب دفع مبلغ{' '}
+              <span className="font-bold text-red-600">
+                {maxAdmissionFee?.toLocaleString('ar-EG')} جنيه
+              </span>{' '}
+              كرسوم تقديم.
             </div>
           )}
 

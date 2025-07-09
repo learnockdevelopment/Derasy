@@ -12,7 +12,7 @@ export default function PrintableApplicationPage() {
   useEffect(() => {
     async function fetchApplication() {
       try {
-        const res = await fetch(`/api/application/${id}`, {
+        const res = await fetch(`/api/me/applications/school/my/${id}`, {
           headers: {
             Authorization: `Bearer ${document.cookie
               .split('; ')
@@ -107,7 +107,7 @@ export default function PrintableApplicationPage() {
           <p><strong>الدفع:</strong> تم الدفع - {app.payment.amount?.toLocaleString('ar-EG')} EGP</p>
         )}
       </section>
-      {app.preferredInterviewSlots?.length > 0 && (
+{app.preferredInterviewSlots?.length > 0 && (
         <section className="mb-6 border p-4 rounded">
           <h2 className="text-xl font-bold mb-2 text-indigo-700">🕓 المواعيد المقترحة للمقابلة</h2>
           <ul className="list-disc pr-5 space-y-1 text-sm text-gray-800">
@@ -120,7 +120,6 @@ export default function PrintableApplicationPage() {
           </ul>
         </section>
       )}
-
       {/* الوثائق (اختياري) */}
       {app.child?.documents?.length > 0 && (
         <section className="mb-6 border p-4 rounded">
