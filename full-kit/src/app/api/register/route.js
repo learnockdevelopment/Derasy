@@ -11,7 +11,9 @@ export async function POST(req) {
 
     const { name, email, password, role } = await req.json();
     console.log("📥 Received signup request:", { name, email, role });
-
+    if (!role) {
+      role = 'parent'; // Default role if not provided
+    }
     if (!name || !email || !password || !role) {
       return Response.json({ message: 'Missing required fields' }, { status: 400 });
     }

@@ -109,7 +109,7 @@ async function fetchUser() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 mt-10 font-[Cairo]">
-      <div className="bg-white shadow-2xl rounded-3xl p-10 text-right border border-purple-100">
+      <div className="bg-muted/40 shadow-2xl rounded-3xl p-10 text-right ">
        <div className="flex flex-col items-center mb-10 relative">
   <div
     className="relative group cursor-pointer"
@@ -142,13 +142,13 @@ async function fetchUser() {
   />
 
   {uploading && <p className="text-sm text-purple-500 mt-2">جاري رفع الصورة...</p>}
-  <h2 className="text-2xl font-bold mt-5 text-gray-800">{user.name}</h2>
-  <p className="text-sm text-gray-500">{user.email}</p>
+  <h2 className="text-2xl font-bold mt-5 text-foreground">{user.name}</h2>
+  <p className="text-sm text-foreground">{user.email}</p>
 </div>
 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ProfileCard
+          <ProfileCard className = "bg-muted/30 "
             icon={<Shield className={`w-5 h-5 ${roleColors[user.role]}`} />}
             label="الدور"
             value={
@@ -158,13 +158,13 @@ async function fetchUser() {
             }
           />
 
-          <ProfileCard
+          <ProfileCard className = "bg-muted/30 "
             icon={<CheckCircle className="text-green-500 w-5 h-5" />}
             label="البريد مفعل"
             value={user.emailVerified ? 'نعم' : 'لا'}
           />
 
-          <ProfileCard
+          <ProfileCard className = "bg-muted/30 "
             icon={<Calendar className="text-blue-500 w-5 h-5" />}
             label="تاريخ التسجيل"
             value={new Date(user.createdAt).toLocaleDateString('ar-EG')}
@@ -172,7 +172,7 @@ async function fetchUser() {
 
           <Link href="/pages/admission/me/financial" passHref>
             <div className="cursor-pointer hover:scale-[1.02] transition-transform">
-              <ProfileCard
+              <ProfileCard className = "bg-muted/30 "
                 icon={<Wallet className="text-yellow-500 w-5 h-5" />}
                 label="رصيد المحفظة"
                 value={

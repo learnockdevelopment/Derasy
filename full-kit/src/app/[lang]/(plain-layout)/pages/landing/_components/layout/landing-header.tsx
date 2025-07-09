@@ -10,7 +10,6 @@ import type { DictionaryType } from "@/lib/get-dictionary"
 import type { LocaleType } from "@/types"
 
 import { headerNavigationData } from "../../_data/header-navigation"
-
 import { ensureLocalizedPathname } from "@/lib/i18n"
 import { cn, isActivePathname } from "@/lib/utils"
 
@@ -19,34 +18,43 @@ import { LanguageDropdown } from "@/components/language-dropdown"
 import { ModeDropdown } from "@/components/mode-dropdown"
 import { LandingSidebar } from "./landing-sidebar"
 
-export function LandingHeader({ dictionary }: { dictionary: DictionaryType }) {
+export function LandingHeader({ dictionary, dashboard = false }: { dictionary: DictionaryType, dashboard?: boolean }) {
   const pathname = usePathname()
   const params = useParams()
   const [fullPathname, setFullPathname] = useState("")
+  const [hasToken, setHasToken] = useState(false)
 
   const locale = params.lang as LocaleType
 
   useEffect(() => {
     setFullPathname(pathname + window.location.hash)
+
+    // Check for token in cookies
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+    setHasToken(!!token)
   }, [params, pathname])
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background border-b border-sidebar-border" dir="rtl">
-      <div className="container grid grid-cols-3 items-center gap-2 py-2.5">
+      <div className={`container grid grid-cols-${dashboard ? "2" : "3"} items-center gap-2 py-2.5`}>
         <LandingSidebar fullPathname={fullPathname} />
-        <Link
-          href="/"
-          className="place-self-center w-fit flex text-foreground font-black hover:text-primary/90 lg:place-self-auto"
-        >
-          <Image
-            src="/images/icons/shadboard.svg"
-            alt=""
-            height={24}
-            width={24}
-            className="dark:invert ms-2"
-          />
-          <span>دراسي</span>
-        </Link>
+        {dashboard || (
+          <Link
+            href="/"
+            className="place-self-center w-fit flex text-foreground font-black hover:text-primary/90 lg:place-self-auto"
+          >
+            <Image
+              src="/images/icons/shadboard.svg"
+              alt=""
+              height={24}
+              width={24}
+              className="dark:invert ms-2"
+            />
+            <span>دراسي</span>
+          </Link>
+        )}
         <nav className="hidden lg:block">
           <ul className="place-self-center flex gap-2">
             {headerNavigationData.map((nav) => {
@@ -59,7 +67,7 @@ export function LandingHeader({ dictionary }: { dictionary: DictionaryType }) {
                       variant: isActive ? "secondary" : "ghost",
                     })}
                   >
-                    {nav.label} {/* You can also translate `nav.label` directly if not already localized */}
+                    {nav.label}
                   </Link>
                 </li>
               )
@@ -69,14 +77,25 @@ export function LandingHeader({ dictionary }: { dictionary: DictionaryType }) {
         <div className="place-self-end flex gap-x-2">
           <ModeDropdown dictionary={dictionary} />
           <LanguageDropdown dictionary={dictionary} />
-          <Link
-            href={ensureLocalizedPathname("/sign-in", locale)}
-            className={cn(buttonVariants(), "hidden lg:flex")}
-          >
-            <LogIn className="ms-2 h-4 w-4" />
-            <span>تسجيل</span>
-          </Link>
+
+          {hasToken ? (
+            <Link
+              href={ensureLocalizedPathname("/pages/admission/me", locale)}
+              className={cn(buttonVariants({ variant: "outline" }), "hidden lg:flex")}
+            >
+              ⚙️ الإعدادات
+            </Link>
+          ) : (
+            <Link
+              href={ensureLocalizedPathname("/sign-in", locale)}
+              className={cn(buttonVariants(), "hidden lg:flex")}
+            >
+              <LogIn className="ms-2 h-4 w-4" />
+              <span>تسجيل</span>
+            </Link>
+          )}
         </div>
+
       </div>
     </header>
   )
