@@ -21,7 +21,7 @@ export const coreBenefitsData: CoreBenefitType[] = [
       "نماذج مُعبأة تلقائيًا لتوفير وقت أولياء الأمور",
       "تتبّع حالة الطلب لحظة بلحظة",
     ],
-    images: ["/images/illustrations/scenes/scene-digital-forms.svg"],
+    images: ["/images/school.jpg"],
   },
   {
     title: "موثوقة من أولياء الأمور والمدارس",
@@ -32,6 +32,6 @@ export const coreBenefitsData: CoreBenefitType[] = [
       "تقييمات ومراجعات حقيقية من أولياء الأمور",
       "لوحة تحكم سهلة لإدارة الطلبات للمدارس",
     ],
-    images: ["/images/illustrations/scenes/scene-trust.svg"],
+    images: ["/images/school.jpg"],
   },
 ]

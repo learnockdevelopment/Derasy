@@ -1,6 +1,5 @@
 import Image from "next/image"
 import { Check } from "lucide-react"
-
 import type { CoreBenefitType } from "../types"
 
 import { AspectRatio } from "@/components/ui/aspect-ratio"
@@ -13,44 +12,56 @@ import {
 
 export function CoreBenefitsItem({ benefit, index }: { benefit: CoreBenefitType, index: number }) {
   const isEven = index % 2 === 0
+
   return (
     <Card
       asChild
-      className={`p-6 bg-transparent border-none ${isEven ? "lg:[direction:rtl]" : "lg:[direction:ltr]"
-        }`}
+      className={`container p-6 bg-transparent border-none ${
+        isEven ? "lg:[direction:rtl]" : "lg:[direction:ltr]"
+      }`}
     >
-
       <StickyLayout asChild>
-        <li>
+        <li className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          {/* Text Content */}
           <StickyLayoutPane>
-            <h3 className="text-2xl font-semibold">{benefit.title}</h3>
-            <p className="max-w-prose text-sm text-muted-foreground">
+            <h3 className="text-3xl font-extrabold text-[#FF6B6B] mb-3 tracking-tight">
+              {benefit.title}
+            </h3>
+            <p className="text-base leading-relaxed text-gray-600 mb-4">
               {benefit.description}
             </p>
-            <ul className="inline-block w-full mt-4 space-y-4 lg:max-w-prose lg:mt-2">
+            <ul className="space-y-4">
               {benefit.points.map((point) => (
-                <Card key={point} asChild>
-                  <li className="flex items-center gap-x-3 p-6 !bg-accent text-accent-foreground">
-                    <Check className="shrink-0 size-4 text-success" />
-                    <span>{point}</span>
-                  </li>
-                </Card>
+                <li
+                  key={point}
+                  className="flex items-center gap-3 bg-pink-100 rounded-xl p-4 shadow-sm"
+                >
+                  <div className="bg-white rounded-full p-2 shadow text-pink-500">
+                    <Check className="w-5 h-5" />
+                  </div>
+                  <span className="text-gray-800 font-medium">{point}</span>
+                </li>
               ))}
             </ul>
           </StickyLayoutPane>
+
+          {/* Image Side */}
           <StickyLayoutContent>
             {benefit.images.map((image) => (
-              <Card key={image} className="bg-muted overflow-hidden" asChild>
+              <div
+                key={image}
+                className="rounded-3xl overflow-hidden shadow-2xl border-4 border-pink-200"
+              >
                 <AspectRatio ratio={1 / 1}>
                   <Image
                     src={image}
-                    alt=""
+                    alt="ميزة"
                     fill
+                    className="object-cover bg-white"
                     sizes="(max-width: 768px) 100vw, 768px"
-                    className="object-cover bg-white dark:invert"
                   />
                 </AspectRatio>
-              </Card>
+              </div>
             ))}
           </StickyLayoutContent>
         </li>

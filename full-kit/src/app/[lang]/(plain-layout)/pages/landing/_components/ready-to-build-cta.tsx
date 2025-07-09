@@ -1,29 +1,24 @@
-import { SiGithub } from "react-icons/si"
+import { FaSchool } from "react-icons/fa6"
 
 import { buttonVariants } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
 export function ReadyToBuildCTA() {
   return (
-    <section id="ready-to-build" className="container">
-      <Card className="flex flex-col justify-center items-center gap-3 text-center px-6 py-12">
-        <div className="space-y-1.5">
-          <h2 className="text-4xl font-semibold">
-            Ready to build your next project faster?
-          </h2>
-          <p className="max-w-prose mx-auto text-sm text-muted-foreground">
-            Get started with our free, open-source admin dashboard template — no
-            signup required.
+    <section id="ready-to-build">
+      <Card className="flex flex-col justify-center items-center gap-4 text-center px-6 py-12 bg-pink-50 border-pink-200 rounded-3xl shadow-sm">
+        <div className="space-y-2">
+          <h2 className="text-4xl font-extrabold text-pink-600">ابدأ رحلتك المدرسية الآن 🎒</h2>
+          <p className="max-w-prose mx-auto text-base text-gray-700">
+            سهّل تقديم طفلك للمدرسة في خطوات بسيطة، وبدون أي أوراق. كل شيء في مكان واحد!
           </p>
         </div>
         <a
-          href="https://github.com/Qualiora/shadboard"
+          href="/schools"
           className={buttonVariants({ size: "lg" })}
-          target="_blank"
-          rel="noopener noreferrer"
         >
-          <SiGithub className="me-2 h-4 w-4" />
-          View on GitHub
+          <FaSchool className="me-2 h-5 w-5 text-white" />
+          تصفّح المدارس الآن
         </a>
       </Card>
     </section>

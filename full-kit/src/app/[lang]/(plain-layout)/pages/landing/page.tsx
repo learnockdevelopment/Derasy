@@ -17,11 +17,11 @@ export default function LandingPage() {
       <CoreBenefits />
       <WhatPeopleSay />
       <ReadyToBuildCTA />
-      <CoreFeatures />
-      <InActionCTA />
-      <PricingPlans />
+      {/* <CoreFeatures />
+      <InActionCTA /> */}
+      {/* <PricingPlans />
       <Faqs />
-      <ContactUs />
+      <ContactUs /> */}
     </div>
   )
 }
