@@ -82,9 +82,8 @@ export function UserDropdown({
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem>
           <LogoutButton/>
-          {dictionary.navigation.userNav.signOut}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
