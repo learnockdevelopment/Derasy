@@ -82,35 +82,44 @@ export default function ChildrenAddPage() {
     setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
   }
 
-
   async function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
 
     const newErrors = {
-      fullName: validateField("fullName", formData.fullName),
-      nationalId: validateField("nationalId", formData.nationalId),
-      gender: formData.gender ? "" : "الرجاء اختيار الجنس",
-      birthDate: formData.birthDate ? "" : "الرجاء إدخال تاريخ الميلاد",
-      desiredGrade: formData.desiredGrade ? "" : "الرجاء إدخال الصف المرغوب",
+      fullName: validateField('fullName', formData.fullName),
+      nationalId: validateField('nationalId', formData.nationalId),
+      gender: formData.gender ? '' : 'الرجاء اختيار الجنس',
+      birthDate: formData.birthDate ? '' : 'الرجاء إدخال تاريخ الميلاد',
+      desiredGrade: formData.desiredGrade ? '' : 'الرجاء إدخال الصف المرغوب',
     };
 
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
       toast({
-        title: "خطأ في الإدخال",
-        description: "الرجاء تصحيح الحقول المطلوبة.",
-        variant: "destructive",
+        title: 'خطأ في الإدخال',
+        description: 'الرجاء تصحيح الحقول المطلوبة.',
+        variant: 'destructive',
       });
       setIsSubmitting(false);
       return;
     }
 
-    const sendRequest = async (token) => {
-      const res = await fetch("/api/children", {
-        method: "POST",
+    try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('token='))
+        ?.split('=')[1] || null;
+
+      toast({
+        title: 'جاري حفظ البيانات...',
+        description: 'نقوم الآن بمعالجة طلبك.',
+      });
+
+      const res = await fetch('/api/children', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify(formData),
@@ -118,72 +127,54 @@ export default function ChildrenAddPage() {
 
       const data = await res.json();
 
+      if (res.status === 403) {
+  showLoginPopup(async () => {
+    // Retry submission after successful login
+    handleSubmit(e);
+  });
+  return;
+}
+
+
       if (res.ok) {
         toast({
-          title: "تم التسجيل بنجاح",
+          title: 'تم التسجيل بنجاح',
           description: `تم تسجيل الطفل ${formData.fullName} بنجاح.`,
         });
 
         setFormData({
-          fullName: "",
-          gender: "",
-          birthDate: "",
-          nationalId: "",
-          currentSchool: "",
-          currentGrade: "",
-          desiredGrade: "",
-          religion: "",
-          specialNeeds: { hasNeeds: false, description: "" },
-          languagePreference: { primaryLanguage: "", secondaryLanguage: "" },
-          healthStatus: { vaccinated: false, notes: "" },
-          zone: "",
+          fullName: '',
+          gender: '',
+          birthDate: '',
+          nationalId: '',
+          currentSchool: '',
+          currentGrade: '',
+          desiredGrade: '',
+          religion: '',
+          specialNeeds: { hasNeeds: false, description: '' },
+          languagePreference: { primaryLanguage: '', secondaryLanguage: '' },
+          healthStatus: { vaccinated: false, notes: '' },
+          zone: '',
         });
         setErrors({});
         setCurrentStep(1);
       } else {
         toast({
-          title: "خطأ",
-          description: data.message || "حدث خطأ أثناء الحفظ.",
-          variant: "destructive",
+          title: 'خطأ',
+          description: data.message || 'حدث خطأ أثناء الحفظ.',
+          variant: 'destructive',
         });
-      }
-
-      return res.status;
-    };
-
-    try {
-      let token =
-        document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token="))
-          ?.split("=")[1] || null;
-
-      toast({
-        title: "جاري حفظ البيانات...",
-        description: "نقوم الآن بمعالجة طلبك.",
-      });
-
-      let status = await sendRequest(token);
-
-      // If unauthorized, prompt login then retry
-      if (status === 403) {
-        const newToken = await showLoginPopup(); // returns token or null
-        if (newToken) {
-          token = newToken;
-          status = await sendRequest(token);
-        }
       }
     } catch (error) {
       toast({
-        title: "خطأ في الاتصال",
-        description: "تعذر الاتصال بالخادم.",
-        variant: "destructive",
+        title: 'خطأ في الاتصال',
+        description: 'تعذر الاتصال بالخادم.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
     }
   }
-
 
   const handleNext = () => {
     const stepErrors = validateStep(steps[currentStep - 1].fields, formData);
