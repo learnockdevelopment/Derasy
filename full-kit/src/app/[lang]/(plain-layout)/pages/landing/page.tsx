@@ -11,9 +11,9 @@ import { WhatPeopleSay } from "./_components/what-people-say"
 
 export default function LandingPage() {
   return (
-    <div className="py-16 space-y-16 bg-muted/40">
+    <div className="bg-muted/40">
       <Hero />
-      <TrustedBy />
+      
       <CoreBenefits />
       <WhatPeopleSay />
       <ReadyToBuildCTA />

@@ -11,9 +11,15 @@ import {
   StickyLayoutPane,
 } from "@/components/ui/sticky-layout"
 
-export function CoreBenefitsItem({ benefit }: { benefit: CoreBenefitType }) {
+export function CoreBenefitsItem({ benefit, index }: { benefit: CoreBenefitType, index: number }) {
+  const isEven = index % 2 === 0
   return (
-    <Card className="p-6" asChild>
+    <Card
+      asChild
+      className={`p-6 bg-transparent border-none ${isEven ? "lg:[direction:rtl]" : "lg:[direction:ltr]"
+        }`}
+    >
+
       <StickyLayout asChild>
         <li>
           <StickyLayoutPane>

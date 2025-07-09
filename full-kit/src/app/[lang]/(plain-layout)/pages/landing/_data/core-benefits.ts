@@ -10,7 +10,7 @@ export const coreBenefitsData: CoreBenefitType[] = [
       "مقارنة المدارس جنباً إلى جنب من حيث العروض والمرافق",
       "نظام تقديم مركزي لعدة مدارس من مكان واحد",
     ],
-    images: ["/images/illustrations/misc/schools-map.svg"],
+    images: ["/images/school.jpg"],
   },
   {
     title: "قبول سهل ودون أوراق",
