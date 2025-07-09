@@ -75,7 +75,7 @@ export function SignInForm() {
       });
 
       document.cookie = `token=${result.token}; path=/;`;
-      router.push("/pages/admission/me");
+      router.push(result.redirectUrl);
     } catch (error) {
       console.error("🚨 Error during login:", error);
       toast({

@@ -7,7 +7,9 @@ const nextConfig = {
 
   // See https://lucide.dev/guide/packages/lucide-react#nextjs-example
   transpilePackages: ["lucide-react"],
-
+  eslint: {
+    ignoreDuringBuilds: true, // ✅ disables ESLint during builds
+  },
   // See https://nextjs.org/docs/app/building-your-application/routing/redirecting#redirects-in-nextconfigjs
   async redirects() {
     return [

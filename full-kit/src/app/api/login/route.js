@@ -2,6 +2,7 @@ import { dbConnect } from '@/lib/dbConnect';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { redirect } from 'next/dist/server/api-utils';
 
 export async function POST(req) {
   try {
@@ -40,7 +41,8 @@ export async function POST(req) {
         name: user.name,
         email: user.email,
         role: user.role
-      }
+      },
+      redirectUrl: user.role !== 'admin' ? '/pages/admission/me' : '/dashboards/analytics'
     });
   } catch (error) {
     console.error("❌ Login error:", error);
