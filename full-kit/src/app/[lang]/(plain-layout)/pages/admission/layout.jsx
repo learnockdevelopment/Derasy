@@ -6,10 +6,19 @@ import { getDictionary } from "@/lib/get-dictionary";
 export default async function DashboardLayout({ children, params }) {
   const user = await getCurrentUser();
   const dictionary = await getDictionary(params.lang);
+  const safeUser = user
+  ? {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+    }
+  : null;
 
   return (
     <div className="min-h-screen flex w-full font-[Cairo]">
-      {user && <Sidebar user={user} />}
+      {user && <Sidebar user={safeUser} />}
 
       <div className="flex-1 flex flex-col w-full">
         <LandingHeader dictionary={dictionary} dashboard={user ? true : false} />

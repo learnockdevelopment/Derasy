@@ -6,6 +6,7 @@ import StepperNavigation from './StepperNavigation';
 import FormContainer from './FormContainer';
 import useValidation from './useValidation';
 import useAuth from './useAuth';
+import NationalIdCardPreview from './ChildCardPreview';
 
 export default function ChildrenAddPage() {
   const [formData, setFormData] = useState({
@@ -128,12 +129,12 @@ export default function ChildrenAddPage() {
       const data = await res.json();
 
       if (res.status === 403) {
-  showLoginPopup(async () => {
-    // Retry submission after successful login
-    handleSubmit(e);
-  });
-  return;
-}
+        showLoginPopup(async () => {
+          // Retry submission after successful login
+          handleSubmit(e);
+        });
+        return;
+      }
 
 
       if (res.ok) {
@@ -201,23 +202,35 @@ export default function ChildrenAddPage() {
   };
 
   return (
-    <div className="py-16 space-y-16 bg-muted/40">
-      <div className="mx-auto p-6 bg-white rounded shadow-md">
-        <h1 className="text-3xl font-bold mb-8 text-center">إضافة بيانات الطفل</h1>
-        <StepperNavigation steps={steps} currentStep={currentStep} />
-        <FormContainer
-          currentStep={currentStep}
-          formData={formData}
-          errors={errors}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          handlePrevious={handlePrevious}
-          handleNext={handleNext}
-          setFormData={setFormData}
-          isSubmitting={isSubmitting}
-          governorates={governorates}
-          steps={steps}
-        />
+    <div className="py-16 ">
+      <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row gap-8">
+        {/* Form Section */}
+        <div className="flex-1 bg-white rounded shadow-md p-6">
+          <h1 className="text-3xl font-bold mb-8 text-center">إضافة بيانات الطفل</h1>
+          <StepperNavigation
+            steps={steps}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+          />
+          <FormContainer
+            currentStep={currentStep}
+            formData={formData}
+            errors={errors}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            handlePrevious={handlePrevious}
+            handleNext={handleNext}
+            setFormData={setFormData}
+            isSubmitting={isSubmitting}
+            governorates={governorates}
+            steps={steps}
+          />
+        </div>
+
+        {/* Preview Card */}
+        <div className="w-full md:w-1/3 sticky top-20 h-fit">
+          <NationalIdCardPreview formData={formData} />
+        </div>
       </div>
     </div>
   );

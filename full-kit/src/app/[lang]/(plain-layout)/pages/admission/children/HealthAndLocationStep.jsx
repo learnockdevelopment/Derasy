@@ -1,35 +1,80 @@
-import Select from "react-select";
+'use client';
+
+import Select from 'react-select';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { Languages, ShieldCheck, MapPin, Globe2 } from 'lucide-react';
+import SearchBox from './SearchBox';
+// Fix Leaflet marker icon issue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+});
+
+function LocationPicker({ formData, setFormData }) {
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      setFormData((prev) => ({
+        ...prev,
+        location: { lat, lng },
+      }));
+    },
+  });
+  return formData.location ? (
+    <Marker position={[formData.location.lat, formData.location.lng]} />
+  ) : null;
+}
 
 export default function HealthAndLocationStep({ formData, setFormData, handleChange, governorates }) {
+  const languageOptions = [
+    { value: 'Arabic', label: 'العربية' },
+    { value: 'English', label: 'الإنجليزية' },
+    { value: 'French', label: 'الفرنسية' },
+    { value: 'German', label: 'الألمانية' },
+    { value: 'Other', label: 'أخرى' },
+  ];
+
   return (
-    <>
+    <div className="space-y-6">
       {/* Language Preference */}
       <div>
-        <label className="block font-semibold mb-1">اللغة الأساسية</label>
-        <select
+        <label className="block font-semibold mb-1 flex items-center gap-2">
+          <Languages className="w-5 h-5 text-muted-foreground" /> اللغة الأساسية
+        </label>
+        <Select
           name="languagePreference.primaryLanguage"
-          value={formData.languagePreference.primaryLanguage}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded p-2"
+          value={
+            languageOptions.find(
+              (option) => option.value === formData.languagePreference.primaryLanguage
+            ) || null
+          }
+          onChange={(selected) =>
+            setFormData((prev) => ({
+              ...prev,
+              languagePreference: {
+                ...prev.languagePreference,
+                primaryLanguage: selected ? selected.value : '',
+              },
+            }))
+          }
+          options={languageOptions}
+          placeholder="اختر اللغة"
+          classNamePrefix="select"
+          isClearable
           aria-describedby="primaryLanguageHelp"
-        >
-          <option value="">اختر اللغة</option>
-          <option value="Arabic">العربية</option>
-          <option value="English">الإنجليزية</option>
-          <option value="French">الفرنسية</option>
-          <option value="German">الألمانية</option>
-          <option value="Other">أخرى</option>
-        </select>
+        />
         <p id="primaryLanguageHelp" className="text-sm text-gray-500 mt-1">
           اختر اللغة الأساسية لتعليم الطفل
         </p>
       </div>
 
+      {/* Secondary Language */}
       <div>
-        <label
-          htmlFor="languagePreference.secondaryLanguage"
-          className="block font-semibold mb-1"
-        >
+        <label htmlFor="languagePreference.secondaryLanguage" className="block font-semibold mb-1">
+          <Globe2 className="inline-block w-5 h-5 mr-1 text-muted-foreground" />
           اللغة الثانوية
         </label>
         <input
@@ -49,9 +94,11 @@ export default function HealthAndLocationStep({ formData, setFormData, handleCha
 
       {/* Health Status */}
       <div>
-        <label className="block font-semibold mb-1">هل تم تطعيم الطفل؟</label>
-        <div className="flex space-x-4">
-          <label className="inline-flex items-center">
+        <label className="block font-semibold mb-1 flex items-center gap-2">
+          <ShieldCheck className="w-5 h-5 text-muted-foreground" /> هل تم تطعيم الطفل؟
+        </label>
+        <div className="flex gap-4 mt-2">
+          <label className="inline-flex items-center gap-2">
             <input
               type="radio"
               name="healthStatus.vaccinated"
@@ -59,11 +106,10 @@ export default function HealthAndLocationStep({ formData, setFormData, handleCha
               checked={formData.healthStatus.vaccinated === true}
               onChange={handleChange}
               className="form-radio"
-              aria-label="تطعيم الطفل: نعم"
             />
-            <span className="mr-2">نعم</span>
+            <span>نعم</span>
           </label>
-          <label className="inline-flex items-center">
+          <label className="inline-flex items-center gap-2">
             <input
               type="radio"
               name="healthStatus.vaccinated"
@@ -71,9 +117,8 @@ export default function HealthAndLocationStep({ formData, setFormData, handleCha
               checked={formData.healthStatus.vaccinated === false}
               onChange={handleChange}
               className="form-radio"
-              aria-label="تطعيم الطفل: لا"
             />
-            <span className="mr-2">لا</span>
+            <span>لا</span>
           </label>
         </div>
         <textarea
@@ -89,10 +134,10 @@ export default function HealthAndLocationStep({ formData, setFormData, handleCha
         </p>
       </div>
 
-      {/* Zone with Autocomplete */}
+      {/* Zone (governorate) */}
       <div>
-        <label htmlFor="zone" className="block font-semibold mb-1">
-          المنطقة
+        <label htmlFor="zone" className="block font-semibold mb-1 flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-muted-foreground" /> المنطقة
         </label>
         <Select
           id="zone"
@@ -100,10 +145,9 @@ export default function HealthAndLocationStep({ formData, setFormData, handleCha
           options={governorates}
           value={governorates.find((option) => option.value === formData.zone) || null}
           onChange={(selected) =>
-            setFormData((prev) => ({ ...prev, zone: selected ? selected.value : "" }))
+            setFormData((prev) => ({ ...prev, zone: selected ? selected.value : '' }))
           }
           placeholder="اختر المنطقة"
-          className="w-full"
           classNamePrefix="select"
           isClearable
           aria-describedby="zoneHelp"
@@ -112,6 +156,8 @@ export default function HealthAndLocationStep({ formData, setFormData, handleCha
           اختر المنطقة أو اكتبها (سيتم ملؤها تلقائيًا من الرقم القومي إذا أدخلته)
         </p>
       </div>
-    </>
+
+
+    </div>
   );
 }

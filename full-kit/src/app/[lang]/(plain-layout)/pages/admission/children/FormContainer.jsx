@@ -31,6 +31,7 @@ export default function FormContainer({
           formData={formData}
           errors={errors}
           handleChange={handleChange}
+          setFormData={setFormData}
         />
       )}
       {currentStep === 3 && (
