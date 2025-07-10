@@ -57,7 +57,7 @@ export default async function RootLayout(props) {
       >
         <Providers locale={params.lang} direction={direction} session={session}>
           {children}
-          <AssistantChat avatar={user?.avatar ?? ""} token={user?.token ?? ""} />
+          {user && <AssistantChat avatar={user?.avatar ?? ""} token={user?.token ?? ""} />}
           <Toaster />
           <Sonner />
         </Providers>
