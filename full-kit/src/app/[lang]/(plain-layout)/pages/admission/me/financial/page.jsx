@@ -130,7 +130,7 @@ export default function WalletPage() {
 
 
   return (
-    <div className="mx-auto p-6 mt-10 font-[Cairo]">
+    <div className="max-w-4xl mx-auto p-6 mt-10 font-[Cairo]">
       <div className="bg-white shadow-lg rounded-2xl p-8 text-right">
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-2 flex items-center gap-2 text-purple-700">

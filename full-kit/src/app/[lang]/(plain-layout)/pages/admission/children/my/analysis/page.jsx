@@ -61,11 +61,11 @@ export default function ChildrenAIAnalysisPage() {
     .map((paragraph, idx) => ({
       key: `bubble-${idx}`,
       content: paragraph,
-      alignment: idx % 2 === 0 ? 'right' : 'left',
+      alignment: idx % 2 === 0 ? 'start' : 'start',
     }));
 
   return (
-    <div className="max-w-5xl mx-auto p-6 mt-10 font-[Cairo] text-right">
+    <div className="mx-auto p-6 mt-10 font-[Cairo] text-right">
       <div className="bg-gradient-to-tr from-purple-500 via-pink-500 to-blue-500 rounded-3xl shadow-2xl p-10 relative overflow-hidden text-white">
         <div className="absolute top-0 left-0 w-full h-full bg-white/10 backdrop-blur-md z-0 rounded-3xl" />
         <div className="relative z-10 space-y-6">
