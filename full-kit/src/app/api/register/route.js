@@ -9,20 +9,61 @@ export async function POST(req) {
     await dbConnect();
     console.log("✅ Connected to DB");
 
-    const { name, email, password, role } = await req.json();
-    console.log("📥 Received signup request:", { name, email, role });
-    if (!role) {
-      role = 'parent'; // Default role if not provided
-    }
+    const { name, email, password, role = 'parent' } = await req.json();
+    
     if (!name || !email || !password || !role) {
       return Response.json({ message: 'Missing required fields' }, { status: 400 });
     }
+const existingUser = await User.findOne({ email });
+    if (existingUser) {
+  if (!existingUser.emailVerified) {
+    // Generate new OTP
+    const newOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const newOtpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
-    const exists = await User.findOne({ email });
-    if (exists) {
-      console.log("⚠ User already exists:", email);
-      return Response.json({ message: 'User already exists' }, { status: 409 });
-    }
+    // Update the user with new OTP
+    existingUser.otp.code = newOtpCode;
+    existingUser.otp.expiresAt = newOtpExpires;
+    await existingUser.save();
+
+    // Send the new OTP email
+    const emailHtml = `
+      <div style="font-family: 'Cairo', sans-serif; padding: 30px; background: #f9f9f9; max-width: 600px; margin: auto; border-radius: 8px; border: 1px solid #eee;">
+        <h2 style="color: #2e86de;">رمز التحقق الخاص بك</h2>
+        <p style="font-size: 16px; color: #333;">مرحبًا ${existingUser.name} 👋، لقد طلبت رمز تحقق جديد من منصة دراسي.</p>
+        <p style="font-size: 16px; color: #333;">يرجى استخدام رمز التحقق التالي لإكمال تفعيل حسابك:</p>
+        <div style="text-align: center; font-size: 32px; font-weight: bold; margin: 20px 0; color: #2e86de;">${newOtpCode}</div>
+        <p style="font-size: 14px; color: #777;">هذا الرمز صالح لمدة 10 دقائق فقط.</p>
+      </div>
+    `;
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: Number(process.env.MAIL_PORT),
+      secure: true,
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD
+      }
+    });
+
+    await transporter.sendMail({
+      from: process.env.MAIL_FROM_ADDRESS,
+      to: existingUser.email,
+      subject: 'رمز التحقق من البريد الإلكتروني',
+      html: emailHtml
+    });
+
+    return Response.json({
+      message: "تم إرسال رمز تحقق جديد إلى بريدك الإلكتروني. الرجاء التحقق لإكمال التسجيل.",
+    });
+  }
+
+  return Response.json({
+    message: "البريد الإلكتروني مستخدم بالفعل.",
+  }, { status: 400 });
+}
+
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

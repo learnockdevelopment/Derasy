@@ -1,79 +1,113 @@
 "use client"
 
-import Link from "next/link"
-import { useParams } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-
-import type { LocaleType, VerifyEmailFormType } from "@/types"
-
-import { VerifyEmailSchema } from "@/schemas/verify-email-schema"
-
-import { ensureLocalizedPathname } from "@/lib/i18n"
-import { cn } from "@/lib/utils"
-
+import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Input } from "@/components/ui/input"
+import { ButtonLoading } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
-import { buttonVariants } from "@/components/ui/button"
-import { Form } from "@/components/ui/form"
 
-export function VerifyEmailForm() {
-  const params = useParams()
-  const form = useForm<VerifyEmailFormType>({
-    resolver: zodResolver(VerifyEmailSchema),
-    defaultValues: {
-      email: "",
-    },
-  })
+export function OtpVerifyPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const email = searchParams.get("email") || ""
 
-  const locale = params.lang as LocaleType
+  const [otp, setOtp] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [resending, setResending] = useState(false)
 
-  async function onSubmit(data: VerifyEmailFormType) {
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+
     try {
-      const response = await fetch("/api/auth/verify-email", {
+      const res = await fetch("/api/register/verify", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to send verification email")
+      const result = await res.json()
+
+      if (!res.ok) {
+        throw new Error(result.message || "رمز التحقق غير صحيح")
       }
 
       toast({
-        title: "Check your email",
-        description:
-          "We've sent you an email with instructions to verify your email address.",
+        title: "✅ تم التحقق من البريد الإلكتروني",
+        description: "يمكنك الآن تسجيل الدخول.",
       })
+
+      router.push("/sign-in")
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Something went wrong",
-        description: error instanceof Error ? error.message : undefined,
+        title: "فشل التحقق",
+        description: error instanceof Error ? error.message : "رمز غير صحيح أو منتهي",
       })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleResend() {
+    setResending(true)
+    try {
+      const res = await fetch("/api/register/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+
+      const result = await res.json()
+
+      if (!res.ok) throw new Error(result.message)
+
+      toast({ title: "📨 تم إرسال رمز جديد", description: "تحقق من بريدك الإلكتروني." })
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "خطأ",
+        description: "تعذر إعادة إرسال الرمز.",
+      })
+    } finally {
+      setResending(false)
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
-        <Link
-          href={ensureLocalizedPathname(
-            process.env.NEXT_PUBLIC_HOME_PATHNAME || "/",
-            locale
-          )}
-          className={cn(buttonVariants({ variant: "default" }))}
-        >
-          Skip for now
-        </Link>
-        <div className="text-center text-sm">
-          Didn&apos;t receive the email?{" "}
-          <Link href="" className="underline">
-            Resend
-          </Link>
+      <form onSubmit={handleVerifyOtp} className="max-w-md w-full space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-2">تأكيد البريد الإلكتروني</h1>
+          <p className="text-muted-foreground text-sm">
+            أدخل رمز التحقق المرسل إلى بريدك الإلكتروني
+          </p>
         </div>
+
+        <Input
+          type="text"
+          dir="rtl"
+          placeholder="أدخل الرمز"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
+        />
+
+        <ButtonLoading
+          isLoading={loading}
+          disabled={!otp}
+          className="w-full"
+          type="submit"
+        >
+          تحقق
+        </ButtonLoading>
+
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resending}
+          className="underline text-sm text-blue-600 w-full text-center"
+        >
+          {resending ? "جاري الإرسال..." : "إعادة إرسال الرمز"}
+        </button>
       </form>
-    </Form>
   )
 }

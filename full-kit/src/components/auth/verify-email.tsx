@@ -7,19 +7,13 @@ import {
   AuthHeader,
   AuthTitle,
 } from "./auth-layout"
-import { VerifyEmailForm } from "./verify-email-form"
+import { OtpVerifyPage } from "./verify-email-form"
 
 export function VerifyEmail({ dictionary }: { dictionary: DictionaryType }) {
   return (
     <Auth dictionary={dictionary}>
-      <AuthHeader>
-        <AuthTitle>Verify Your Email</AuthTitle>
-        <AuthDescription>
-          Check your inbox for an email from us and follow the verification link
-        </AuthDescription>
-      </AuthHeader>
       <AuthForm>
-        <VerifyEmailForm />
+        <OtpVerifyPage />
       </AuthForm>
     </Auth>
   )

@@ -47,6 +47,7 @@ export function RegisterForm() {
   const isDisabled = isSubmitting || !isDirty
 
   async function onSubmit(data: RegisterFormType) {
+    console.log("Registering user with data:", data)
     try {
       const res = await fetch("/api/register", {
         method: "POST",
@@ -68,13 +69,14 @@ export function RegisterForm() {
       })
 
       router.push(
-        ensureLocalizedPathname(
-          redirectPathname
-            ? ensureRedirectPathname("/sign-in", redirectPathname)
-            : "/sign-in",
-          locale
-        )
-      )
+  ensureLocalizedPathname(
+    redirectPathname
+      ? ensureRedirectPathname("/verify-email", redirectPathname)
+      : `/verify-email?email=${encodeURIComponent(data.email)}`,
+    locale
+  )
+)
+
     } catch (error) {
       toast({
         variant: "destructive",
@@ -86,7 +88,10 @@ export function RegisterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+      <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+        console.log("Validation Errors:", errors)
+      })
+      } className="grid gap-6">
         <FormField
           control={form.control}
           name="name"
@@ -129,7 +134,7 @@ export function RegisterForm() {
           )}
         />
 
-        
+
 
         <ButtonLoading isLoading={isSubmitting} disabled={isDisabled}>
           تسجيل باستخدام البريد الإلكتروني
