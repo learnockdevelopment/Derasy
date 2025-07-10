@@ -5,7 +5,7 @@ const nextConfig = {
   // Configure `pageExtensions` to include markdown and MDX files
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   experimental: {
-    turbo: false
+    turbo: false,
   },
 
   // See https://lucide.dev/guide/packages/lucide-react#nextjs-example

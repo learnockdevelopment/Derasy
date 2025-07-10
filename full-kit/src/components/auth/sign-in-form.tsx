@@ -91,7 +91,7 @@ export function SignInForm() {
   }
 
   const testUsers = [
-    { label: "👤 ولي أمر", email: "parent@derasy.com", password: "123456" },
+    { label: "👤 ولي أمر", email: "adamsoliman800@gmail.com", password: "As1092001@@" },
     { label: "🏫 صاحب مدرسة", email: "school@derasy.com", password: "123456" },
     { label: "🛠️ مشرف", email: "moderator@derasy.com", password: "123456" },
     { label: "🧑‍💼 مدير", email: "admin@derasy.com", password: "123456" }

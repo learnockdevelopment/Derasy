@@ -1,217 +1,221 @@
-'use client';
+"use client"
 
-import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import Swal from 'sweetalert2';
-import ChildSelector from './ChildSelector';
-import SelectedChildInfo from './SelectedChildInfo';
-import SchoolCard from './SchoolCard';
-import AdmissionBox from './AdmissionBox';
-import { toast } from '@/hooks/use-toast';
-import ReactMarkdown from 'react-markdown';
-import InterviewSlotSelector from './InterviewSelector'
+import { useEffect, useState } from "react"
+import ReactMarkdown from "react-markdown"
+import Swal from "sweetalert2"
+import { Loader2 } from "lucide-react"
+
+import { toast } from "@/hooks/use-toast"
+import AdmissionBox from "./AdmissionBox"
+import ChildSelector from "./ChildSelector"
+import InterviewSlotSelector from "./InterviewSelector"
+import SchoolCard from "./SchoolCard"
+import SelectedChildInfo from "./SelectedChildInfo"
 
 export default function AdmissionPage() {
-  const [children, setChildren] = useState([]);
-  const [schools, setSchools] = useState([]);
-  const [selectedChildId, setSelectedChildId] = useState(null);
-  const [selectedSchools, setSelectedSchools] = useState([]);
-  const [schoolSearch, setSchoolSearch] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [suggestedMarkdown, setSuggestedMarkdown] = useState('');
-  const [suggestedIds, setSuggestedIds] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [interviewSlotsMap, setInterviewSlotsMap] = useState({});
+  const [children, setChildren] = useState([])
+  const [schools, setSchools] = useState([])
+  const [selectedChildId, setSelectedChildId] = useState(null)
+  const [selectedSchools, setSelectedSchools] = useState([])
+  const [schoolSearch, setSchoolSearch] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [suggestedMarkdown, setSuggestedMarkdown] = useState("")
+  const [suggestedIds, setSuggestedIds] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [interviewSlotsMap, setInterviewSlotsMap] = useState({})
 
-
-
-  const selectedChild = children.find((c) => c._id === selectedChildId);
+  const selectedChild = children.find((c) => c._id === selectedChildId)
   const maxAdmissionFee = Math.max(
     ...selectedSchools.map((s) => s?.admissionFee?.amount ?? 0),
     0
-  );
+  )
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const token = document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('token='))
-          ?.split('=')[1] || '';
+        const token =
+          document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1] || ""
 
         const [childrenRes, schoolsRes] = await Promise.all([
-          fetch('/api/children/get-related', {
+          fetch("/api/children/get-related", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch('/api/schools/view'),
-        ]);
+          fetch("/api/schools/view"),
+        ])
 
-        const childrenData = await childrenRes.json();
-        const schoolsData = await schoolsRes.json();
+        const childrenData = await childrenRes.json()
+        const schoolsData = await schoolsRes.json()
 
-        if (!childrenRes.ok || !schoolsRes.ok) throw new Error('فشل في تحميل البيانات');
+        if (!childrenRes.ok || !schoolsRes.ok)
+          throw new Error("فشل في تحميل البيانات")
 
-        setChildren(childrenData.children || []);
+        setChildren(childrenData.children || [])
         setSchools(
           (schoolsData.schools || []).sort(
-            (a, b) => (b.admissionFee?.amount || 0) - (a.admissionFee?.amount || 0)
+            (a, b) =>
+              (b.admissionFee?.amount || 0) - (a.admissionFee?.amount || 0)
           )
-        );
+        )
       } catch (err) {
-        Swal.fire({ icon: 'error', title: 'خطأ', text: err.message });
+        Swal.fire({ icon: "error", title: "خطأ", text: err.message })
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const handleDrop = (school) => {
-    if (!school?._id || selectedSchools.some((s) => s._id === school._id)) return;
+    if (!school?._id || selectedSchools.some((s) => s._id === school._id))
+      return
 
     if (selectedSchools.length >= 3) {
       Swal.fire({
-        icon: 'warning',
-        title: 'الحد الأقصى',
-        text: 'يمكنك اختيار 3 مدارس فقط.',
-      });
-      return;
+        icon: "warning",
+        title: "الحد الأقصى",
+        text: "يمكنك اختيار 3 مدارس فقط.",
+      })
+      return
     }
 
-    setSelectedSchools([...selectedSchools, school]);
-  };
-const updateSlotsForSchool = (schoolId, slots) => {
-  setInterviewSlotsMap((prev) => ({
-    ...prev,
-    [schoolId]: slots,
-  }));
-};
+    setSelectedSchools([...selectedSchools, school])
+  }
+  const updateSlotsForSchool = (schoolId, slots) => {
+    setInterviewSlotsMap((prev) => ({
+      ...prev,
+      [schoolId]: slots,
+    }))
+  }
 
   const handleSuggest = async () => {
     if (!selectedChildId) {
       return toast({
-        title: '⚠️ برجاء اختيار طفل أولاً',
-        variant: 'destructive',
-      });
+        title: "⚠️ برجاء اختيار طفل أولاً",
+        variant: "destructive",
+      })
     }
 
     if (schools.length === 0) {
       return toast({
-        title: 'ℹ️ لا توجد مدارس متاحة',
-        variant: 'default',
-      });
+        title: "ℹ️ لا توجد مدارس متاحة",
+        variant: "default",
+      })
     }
 
-    const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('token='))
-      ?.split('=')[1] || '';
+    const token =
+      document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1] || ""
 
     toast({
-      title: '⏳ يتم تحليل البيانات واقتراح المدارس...',
-      variant: 'default',
-    });
+      title: "⏳ يتم تحليل البيانات واقتراح المدارس...",
+      variant: "default",
+    })
 
     try {
-      const res = await fetch('/api/schools/suggest-three', {
-        method: 'POST',
+      const res = await fetch("/api/schools/suggest-three", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           child: selectedChild,
           schools: schools,
         }),
-      });
+      })
 
-      const data = await res.json();
+      const data = await res.json()
 
-      if (!res.ok) throw new Error(data.message || 'فشل في توليد الترشيحات');
+      if (!res.ok) throw new Error(data.message || "فشل في توليد الترشيحات")
 
       toast({
-        title: '🎓 الترشيحات جاهزة!',
-        description: 'تم تحليل بيانات الطفل بنجاح',
-      });
+        title: "🎓 الترشيحات جاهزة!",
+        description: "تم تحليل بيانات الطفل بنجاح",
+      })
 
-      setSuggestedMarkdown(data.markdown || '');
-      setSuggestedIds(data.suggestedIds || []);
+      setSuggestedMarkdown(data.markdown || "")
+      setSuggestedIds(data.suggestedIds || [])
     } catch (error) {
       toast({
-        title: 'حدث خطأ أثناء تحليل البيانات',
+        title: "حدث خطأ أثناء تحليل البيانات",
         description: error.message,
-        variant: 'destructive',
-      });
+        variant: "destructive",
+      })
     }
-  };
+  }
 
   const handleRemove = (id) => {
-    setSelectedSchools(selectedSchools.filter((s) => s._id !== id));
-  };
+    setSelectedSchools(selectedSchools.filter((s) => s._id !== id))
+  }
 
   const handleSubmitApplication = async () => {
     if (!selectedChild || selectedSchools.length === 0) {
       return toast({
-        title: 'يرجى اختيار طفل ومدارس للتقديم',
-        variant: 'destructive',
-      });
+        title: "يرجى اختيار طفل ومدارس للتقديم",
+        variant: "destructive",
+      })
     }
 
-    const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('token='))
-      ?.split('=')[1] || '';
+    const token =
+      document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1] || ""
 
     try {
-      const res = await fetch('/api/admission/apply', {
-        method: 'POST',
+      const res = await fetch("/api/admission/apply", {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           childId: selectedChild._id,
           selectedSchools: selectedSchools,
-          
-        })
-      });
+        }),
+      })
 
-      const data = await res.json();
+      const data = await res.json()
 
-      if (!res.ok) throw new Error(data.message || 'فشل في تقديم الطلب');
+      if (!res.ok) throw new Error(data.message || "فشل في تقديم الطلب")
 
       toast({
-        title: '📨 تم تقديم الطلب بنجاح',
-        description: 'يرجى متابعة حالة الطلب من صفحة الطلبات.',
-      });
+        title: "📨 تم تقديم الطلب بنجاح",
+        description: "يرجى متابعة حالة الطلب من صفحة الطلبات.",
+      })
 
-      setSelectedSchools([]);
+      setSelectedSchools([])
     } catch (error) {
       toast({
-        title: '❌ فشل في التقديم',
+        title: "❌ فشل في التقديم",
         description: error.message,
-        variant: 'destructive',
-      });
+        variant: "destructive",
+      })
     }
-  };
+  }
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin w-8 h-8 text-purple-600" />
       </div>
-    );
+    )
   }
 
   const sortedSchools = [...schools].sort((a, b) => {
-    const indexA = suggestedIds.indexOf(a._id);
-    const indexB = suggestedIds.indexOf(b._id);
-    if (indexA === -1 && indexB === -1) return 0;
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-    return indexA - indexB;
-  });
+    const indexA = suggestedIds.indexOf(a._id)
+    const indexB = suggestedIds.indexOf(b._id)
+    if (indexA === -1 && indexB === -1) return 0
+    if (indexA === -1) return 1
+    if (indexB === -1) return -1
+    return indexA - indexB
+  })
 
   return (
     <div className="max-w-6xl mx-auto p-6 font-[Cairo] text-right">
@@ -237,7 +241,10 @@ const updateSlotsForSchool = (schoolId, slots) => {
           </div>
 
           {suggestedMarkdown && (
-            <div className="my-6 p-4 border border-purple-300 bg-purple-50 rounded-lg shadow max-h-[400px] overflow-auto text-right leading-relaxed text-sm" dir="rtl">
+            <div
+              className="my-6 p-4 border border-purple-300 bg-purple-50 rounded-lg shadow max-h-[400px] overflow-auto text-right leading-relaxed text-sm"
+              dir="rtl"
+            >
               <ReactMarkdown>{suggestedMarkdown}</ReactMarkdown>
             </div>
           )}
@@ -260,11 +267,16 @@ const updateSlotsForSchool = (schoolId, slots) => {
           <div className="p-4 space-y-4">
             {sortedSchools
               .filter((school) =>
-                school?.name?.toLowerCase().includes(schoolSearch?.toLowerCase())
+                school?.name
+                  ?.toLowerCase()
+                  .includes(schoolSearch?.toLowerCase())
               )
               .map((school) => (
                 <div key={school._id} className="relative">
-                  <SchoolCard school={school} suggested={suggestedIds.includes(school._id)} />
+                  <SchoolCard
+                    school={school}
+                    suggested={suggestedIds.includes(school._id)}
+                  />
                 </div>
               ))}
           </div>
@@ -279,11 +291,14 @@ const updateSlotsForSchool = (schoolId, slots) => {
           />
 
           {selectedSchools.length > 0 && (
-            <div dir="rtl" className="text-center bg-yellow-100 p-4 rounded-lg shadow-inner text-sm">
-              يجب دفع مبلغ{' '}
+            <div
+              dir="rtl"
+              className="text-center bg-yellow-100 p-4 rounded-lg shadow-inner text-sm"
+            >
+              يجب دفع مبلغ{" "}
               <span className="font-bold text-red-600">
-                {maxAdmissionFee?.toLocaleString('ar-EG')} جنيه
-              </span>{' '}
+                {maxAdmissionFee?.toLocaleString("ar-EG")} جنيه
+              </span>{" "}
               كرسوم تقديم.
             </div>
           )}
@@ -299,5 +314,5 @@ const updateSlotsForSchool = (schoolId, slots) => {
         </div>
       </div>
     </div>
-  );
+  )
 }
