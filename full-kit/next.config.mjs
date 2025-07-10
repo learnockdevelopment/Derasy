@@ -7,7 +7,9 @@ const nextConfig = {
   experimental: {
     turbo: false,
   },
-
+images: {
+    domains: ['ik.imagekit.io'],
+  },
   // See https://lucide.dev/guide/packages/lucide-react#nextjs-example
   transpilePackages: ["lucide-react"],
   eslint: {

@@ -1,20 +1,26 @@
-import jwt from 'jsonwebtoken';
-import User from '@/models/User';
-import { cookies } from 'next/headers';
-import { dbConnect } from './dbConnect';
+import jwt from 'jsonwebtoken'
+import User from '@/models/User'
+import { cookies } from 'next/headers'
+import { dbConnect } from './dbConnect'
 
 export async function getCurrentUser() {
-  await dbConnect();
-  const cookieStore = cookies();
-  const token = cookieStore.get('token')?.value;
+  await dbConnect()
+  const cookieStore = cookies()
+  const token = cookieStore.get('token')?.value
 
-  if (!token) return null;
+  if (!token) return null
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).lean();
-    return user;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findById(decoded.id).lean()
+
+    if (!user) return null
+
+    return {
+      ...user,
+      token, // ✅ include token
+    }
   } catch (err) {
-    return null;
+    return null
   }
 }

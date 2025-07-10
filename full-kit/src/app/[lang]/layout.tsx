@@ -6,7 +6,7 @@ import { authOptions } from "@/configs/next-auth"
 import { cn } from "@/lib/utils"
 
 import "../globals.css"
-
+import { getCurrentUser } from "@/lib/getCurrentUser";
 import { Providers } from "@/providers"
 
 import type { LocaleType } from "@/types"
@@ -15,6 +15,7 @@ import type { ReactNode } from "react"
 
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { Toaster } from "@/components/ui/toaster"
+import {AssistantChat} from './chat'
 
 // Define metadata for the application
 // More info: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
@@ -52,7 +53,7 @@ export default async function RootLayout(props: {
 
   const session = await getServerSession(authOptions)
   const direction = i18n.localeDirection[params.lang]
-
+const user = await getCurrentUser();
   return (
     <html lang={params.lang} dir={direction} suppressHydrationWarning>
       <body
@@ -65,6 +66,8 @@ export default async function RootLayout(props: {
       >
         <Providers locale={params.lang} direction={direction} session={session}>
           {children}
+          <AssistantChat avatar={user.avatar} token={user.token}/>
+          {/* Render the Sonner and Toaster components for notifications */}
           <Toaster />
           <Sonner />
         </Providers>
