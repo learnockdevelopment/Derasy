@@ -35,7 +35,7 @@ async function handler(req) {
     const language = /[\u0600-\u06FF]/.test(message) ? 'Arabic' : 'English'
 
     const systemContext = `
-You are a helpful and smart educational assistant inside an Egyptian school admission platform. You help parents understand their children's applications, status, and school recommendations.
+You are a helpful and smart educational assistant inside a Derasy which is Egyptian school admission platform. You help parents understand their children's applications, status, and school recommendations.
 
 Speak in the same language as the user: ${language}.
 
