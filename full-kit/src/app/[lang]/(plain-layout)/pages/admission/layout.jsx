@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children, params }) {
       {user && <Sidebar user={safeUser} />}
 
       <div className="flex-1 flex flex-col w-full">
-        <LandingHeader dictionary={dictionary} dashboard={user ? true : false} />
+        <LandingHeader dictionary={dictionary} dashboard={user ? true : false} user={safeUser}/>
 
         <main className="p-6 flex-1 overflow-y-auto">{children}</main>
 

@@ -17,8 +17,9 @@ import { buttonVariants } from "@/components/ui/button"
 import { LanguageDropdown } from "@/components/language-dropdown"
 import { ModeDropdown } from "@/components/mode-dropdown"
 import { LandingSidebar } from "./landing-sidebar"
+import { UserDropdown } from "@/components/layout/user-dropdown"
 
-export function LandingHeader({ dictionary, dashboard = false }: { dictionary: DictionaryType, dashboard?: boolean }) {
+export function LandingHeader({ dictionary, dashboard = false, user }: { dictionary: DictionaryType, dashboard?: boolean, user?: { name?: string; email?: string; avatar?: string } }) {
   const pathname = usePathname()
   const params = useParams()
   const [fullPathname, setFullPathname] = useState("")
@@ -79,12 +80,7 @@ export function LandingHeader({ dictionary, dashboard = false }: { dictionary: D
           <LanguageDropdown dictionary={dictionary} />
 
           {hasToken ? (
-            <Link
-              href={ensureLocalizedPathname("/pages/admission/me", locale)}
-              className={cn(buttonVariants({ variant: "outline" }), "hidden lg:flex")}
-            >
-              ⚙️ الإعدادات
-            </Link>
+            <UserDropdown locale={locale} dictionary={dictionary} user={user || {}} />
           ) : (
             <Link
               href={ensureLocalizedPathname("/sign-in", locale)}

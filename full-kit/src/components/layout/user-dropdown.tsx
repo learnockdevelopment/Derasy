@@ -4,9 +4,6 @@ import { LogOut, User, UserCog } from "lucide-react"
 import LogoutButton from "../../app/[lang]/(plain-layout)/pages/admission/LogoutButton";
 import type { DictionaryType } from "@/lib/get-dictionary"
 import type { LocaleType } from "@/types"
-
-import { userData } from "@/data/user"
-
 import { ensureLocalizedPathname } from "@/lib/i18n"
 import { getInitials } from "@/lib/utils"
 
@@ -25,9 +22,11 @@ import {
 export function UserDropdown({
   dictionary,
   locale,
+  user
 }: {
   dictionary: DictionaryType
   locale: LocaleType
+  user?: { name?: string; email?: string; avatar?: string, role?: string }
 }) {
   
   return (
@@ -40,9 +39,9 @@ export function UserDropdown({
           aria-label="User"
         >
           <Avatar className="size-9">
-            <AvatarImage src={userData?.avatar} alt="" />
+            <AvatarImage src={user?.avatar} alt="" />
             <AvatarFallback className="bg-transparent">
-              {userData?.name && getInitials(userData.name)}
+              {user?.name && getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -50,15 +49,15 @@ export function UserDropdown({
       <DropdownMenuContent forceMount>
         <DropdownMenuLabel className="flex gap-2">
           <Avatar>
-            <AvatarImage src={userData?.avatar} alt="Avatar" />
+            <AvatarImage src={user?.avatar} alt="Avatar" />
             <AvatarFallback className="bg-transparent">
-              {userData?.name && getInitials(userData.name)}
+              {user?.name && getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col overflow-hidden">
-            <p className="text-sm font-medium truncate">John Doe</p>
+            <p className="text-sm font-medium truncate">{user?.name}</p>
             <p className="text-xs text-muted-foreground font-semibold truncate">
-              {userData?.email}
+              {user?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -66,7 +65,7 @@ export function UserDropdown({
         <DropdownMenuGroup className="max-w-48">
           <DropdownMenuItem asChild>
             <Link
-              href={ensureLocalizedPathname("/pages/account/profile", locale)}
+              href={ensureLocalizedPathname(user?.role === 'admin' ? "/pages/account/profile" : "/pages/admission/me", locale)}
             >
               <User className="me-2 size-4" />
               {dictionary.navigation.userNav.profile}
