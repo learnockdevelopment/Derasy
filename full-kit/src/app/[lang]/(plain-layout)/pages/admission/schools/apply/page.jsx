@@ -23,7 +23,7 @@ export default function AdmissionPage() {
   const [suggestedIds, setSuggestedIds] = useState([])
   const [loading, setLoading] = useState(true)
   const [interviewSlotsMap, setInterviewSlotsMap] = useState({})
-
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const selectedChild = children.find((c) => c._id === selectedChildId)
   const maxAdmissionFee = Math.max(
     ...selectedSchools.map((s) => s?.admissionFee?.amount ?? 0),
@@ -168,6 +168,7 @@ export default function AdmissionPage() {
         .find((row) => row.startsWith("token="))
         ?.split("=")[1] || ""
 
+    setIsSubmitting(true) // 🔁 Start loading
     try {
       const res = await fetch("/api/admission/apply", {
         method: "POST",
@@ -197,6 +198,8 @@ export default function AdmissionPage() {
         description: error.message,
         variant: "destructive",
       })
+    } finally {
+      setIsSubmitting(false) // ✅ End loading
     }
   }
 
@@ -306,9 +309,17 @@ export default function AdmissionPage() {
           {selectedChild && selectedSchools.length > 0 && (
             <button
               onClick={handleSubmitApplication}
-              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition font-semibold"
+              disabled={isSubmitting}
+              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
             >
-              📩 تقديم الطلب الآن
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin w-5 h-5" />
+                  جاري التقديم...
+                </>
+              ) : (
+                <>📩 تقديم الطلب الآن</>
+              )}
             </button>
           )}
         </div>
