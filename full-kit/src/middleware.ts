@@ -1,47 +1,48 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server"
+
+import type { NextRequest } from "next/server"
 
 import {
   ensureLocalizedPathname,
   getLocaleFromPathname,
   getPreferredLocale,
   isPathnameMissingLocale,
-} from "@/lib/i18n";
+} from "@/lib/i18n"
 
 function redirectWithLocale(pathname: string, request: NextRequest) {
-  const { search, hash } = request.nextUrl;
-  let resolvedPathname = pathname;
+  const { search, hash } = request.nextUrl
+  let resolvedPathname = pathname
 
   // Add locale if it's missing
   if (isPathnameMissingLocale(pathname)) {
-    const preferredLocale = getPreferredLocale(request);
-    resolvedPathname = ensureLocalizedPathname(pathname, preferredLocale);
+    const preferredLocale = getPreferredLocale(request)
+    resolvedPathname = ensureLocalizedPathname(pathname, preferredLocale)
   }
 
   // Preserve search params and hash
-  if (search) resolvedPathname += search;
-  if (hash) resolvedPathname += hash;
+  if (search) resolvedPathname += search
+  if (hash) resolvedPathname += hash
 
-  const redirectUrl = new URL(resolvedPathname, request.url).toString();
-  return NextResponse.redirect(redirectUrl);
+  const redirectUrl = new URL(resolvedPathname, request.url).toString()
+  return NextResponse.redirect(redirectUrl)
 }
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl
 
   // ✅ Redirect root path `/` to `/pages/landing`
   if (pathname === "/") {
-    return NextResponse.redirect(new URL("/pages/landing", request.url));
+    return NextResponse.redirect(new URL("/pages/landing", request.url))
   }
 
-  const locale = getLocaleFromPathname(pathname);
+  const locale = getLocaleFromPathname(pathname)
 
   // Redirect if missing locale
   if (!locale) {
-    return redirectWithLocale(pathname, request);
+    return redirectWithLocale(pathname, request)
   }
 
-  return NextResponse.next();
+  return NextResponse.next()
 }
 
 export const config = {
@@ -49,4 +50,4 @@ export const config = {
     // Apply to all non-static and non-API routes
     "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|images|docs).*)",
   ],
-};
+}

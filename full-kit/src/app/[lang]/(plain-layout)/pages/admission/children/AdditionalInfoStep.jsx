@@ -1,58 +1,29 @@
 import {
-  Landmark,
+  Accessibility,
   Church,
   HelpCircle,
-  Accessibility,
+  Info,
+  Landmark,
   UserCheck,
   UserX,
-  Info,
-} from "lucide-react";
-
+} from "lucide-react"
 
 export default function AdditionalInfoStep({ formData, errors, handleChange }) {
-  const religionOptions = [
-    { value: "Muslim", label: "مسلم", icon: <Landmark className="w-5 h-5" /> },
-    { value: "Christian", label: "مسيحي", icon: <Church className="w-5 h-5" /> },
-    { value: "Other", label: "أخرى", icon: <HelpCircle className="w-5 h-5" /> },
-  ];
-
   const specialNeedsOptions = [
-    { value: true, label: "نعم", icon: <UserCheck className="w-5 h-5 text-green-600" /> },
-    { value: false, label: "لا", icon: <UserX className="w-5 h-5 text-red-600" /> },
-  ];
+    {
+      value: true,
+      label: "نعم",
+      icon: <UserCheck className="w-5 h-5 text-green-600" />,
+    },
+    {
+      value: false,
+      label: "لا",
+      icon: <UserX className="w-5 h-5 text-red-600" />,
+    },
+  ]
 
   return (
     <>
-      {/* Religion */}
-      <div>
-        <label className="block font-semibold mb-2 flex items-center gap-2">
-          <Accessibility className="w-5 h-5 text-gray-600" />
-          اختر الدين
-        </label>
-        <div className="grid grid-cols-3 gap-4">
-          {religionOptions.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() =>
-                handleChange({ target: { name: "religion", value: option.value } })
-              }
-              className={`flex flex-col items-center gap-1 border p-3 rounded-lg transition-all duration-150 ${
-                formData.religion === option.value
-                  ? "bg-blue-100 border-blue-600 text-blue-700"
-                  : "border-gray-300 hover:border-gray-500"
-              }`}
-            >
-              {option.icon}
-              <span className="text-sm">{option.label}</span>
-            </button>
-          ))}
-        </div>
-        <p id="religionHelp" className="text-sm text-gray-500 mt-2">
-          اختر الدين إن أردت
-        </p>
-      </div>
-
       {/* Special Needs */}
       <div className="mt-6">
         <label className="block font-semibold mb-2 flex items-center gap-2">
@@ -100,5 +71,5 @@ export default function AdditionalInfoStep({ formData, errors, handleChange }) {
         </p>
       </div>
     </>
-  );
+  )
 }
