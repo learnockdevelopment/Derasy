@@ -51,6 +51,14 @@ export default function ChildrenAddPage() {
 
   const steps = [
     {
+      title: "نوع الطلب",
+      fields: ["applicationType"],
+    },
+    {
+      title: "نوع التعليم",
+      fields: ["educationType"], // <-- New field here
+    },
+    {
       title: "معلومات الطالب الأساسية",
       fields: ["fullName", "gender", "birthDate", "nationalId"],
     },
@@ -58,12 +66,17 @@ export default function ChildrenAddPage() {
       title: "معلومات الطالب الدراسية",
       fields: ["currentSchool", "currentGrade", "desiredGrade"],
     },
-    { title: "معلومات إضافية", fields: ["religion", "specialNeeds"] },
+
+    {
+      title: "معلومات إضافية",
+      fields: ["religion", "specialNeeds"]
+    },
     {
       title: "الصحة والموقع",
       fields: ["languagePreference", "healthStatus", "zone"],
     },
-  ]
+  ];
+
 
   const { validateField, validateStep, debouncedExtractFromNationalId } =
     useValidation(setFormData, setErrors)
@@ -211,7 +224,7 @@ export default function ChildrenAddPage() {
     }
 
     if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1)
+      setCurrentStep(currentStep )
     }
   }
 

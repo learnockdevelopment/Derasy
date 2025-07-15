@@ -38,7 +38,7 @@ export function LandingHeader({ dictionary, dashboard = false, user }: { diction
   }, [params, pathname])
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background border-b border-sidebar-border" dir="rtl">
+    <header className="sticky top-5 z-50 w-3/4 bg-background border-b border-sidebar-border rounded-4xl mx-auto py-3 shadow-lg" dir="rtl">
       <div className={`container grid grid-cols-${dashboard ? "2" : "3"} items-center gap-2 py-2.5`}>
         <LandingSidebar fullPathname={fullPathname} />
         {dashboard || (

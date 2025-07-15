@@ -1,8 +1,10 @@
+import EducationTypeStep from "./EducationTypeStep"; // ✅ New first step
 import PersonalInfoStep from "./PersonalInfoStep";
 import SchoolInfoStep from "./SchoolInfoStep";
 import AdditionalInfoStep from "./AdditionalInfoStep";
 import HealthAndLocationStep from "./HealthAndLocationStep";
 import FormNavigation from "./FormNavigation";
+import ApplicationTypeStep from "./ProcessType"; // ✅ New first step
 
 export default function FormContainer({
   currentStep,
@@ -19,14 +21,29 @@ export default function FormContainer({
 }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 text-right">
+      {currentStep === 0 && (
+        <ApplicationTypeStep
+          formData={formData}
+          errors={errors}
+          handleChange={handleChange}
+        />
+      )}
+
       {currentStep === 1 && (
-        <PersonalInfoStep
+        <EducationTypeStep
           formData={formData}
           errors={errors}
           handleChange={handleChange}
         />
       )}
       {currentStep === 2 && (
+        <PersonalInfoStep
+          formData={formData}
+          errors={errors}
+          handleChange={handleChange}
+        />
+      )}
+      {currentStep === 3 && (
         <SchoolInfoStep
           formData={formData}
           errors={errors}
@@ -34,14 +51,14 @@ export default function FormContainer({
           setFormData={setFormData}
         />
       )}
-      {currentStep === 3 && (
+      {currentStep === 4 && (
         <AdditionalInfoStep
           formData={formData}
           errors={errors}
           handleChange={handleChange}
         />
       )}
-      {currentStep === 4 && (
+      {currentStep === 5 && (
         <HealthAndLocationStep
           formData={formData}
           errors={errors}
@@ -50,6 +67,7 @@ export default function FormContainer({
           governorates={governorates}
         />
       )}
+
       <FormNavigation
         currentStep={currentStep}
         steps={steps}

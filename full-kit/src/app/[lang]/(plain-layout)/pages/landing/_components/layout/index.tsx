@@ -13,7 +13,7 @@ export function Layout({
   user?: { name?: string; email?: string; avatar?: string }
 }) {
   return (
-    <div className="grow">
+    <div className="grow text-center">
       <LandingHeader dictionary={dictionary} user={user} />
       <main>{children}</main>
       <LandingFooter />
