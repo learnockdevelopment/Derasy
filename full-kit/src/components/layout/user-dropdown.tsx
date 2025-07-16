@@ -1,12 +1,12 @@
-import Link from "next/link"
-import { signOut } from "next-auth/react"
-import { LogOut, User, UserCog } from "lucide-react"
-import LogoutButton from "../../app/[lang]/(plain-layout)/pages/admission/LogoutButton";
-import type { DictionaryType } from "@/lib/get-dictionary"
-import type { LocaleType } from "@/types"
-import { ensureLocalizedPathname } from "@/lib/i18n"
-import { getInitials } from "@/lib/utils"
+"use client"
 
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { LogOut, User, UserCog } from "lucide-react"
+import { cn, getInitials } from "@/lib/utils"
+import { ensureLocalizedPathname } from "@/lib/i18n"
+
+import LogoutButton from "../../app/[lang]/(plain-layout)/pages/admission/LogoutButton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,6 +19,49 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import {
+  Home,
+  Baby,
+  Brain,
+  School,
+  Settings,
+  Inbox,
+  Users,
+  FileText,
+  ShieldCheck,
+} from "lucide-react"
+
+import type { DictionaryType } from "@/lib/get-dictionary"
+import type { LocaleType } from "@/types"
+
+// Menu structure from your Sidebar
+const menu = {
+  parent: [
+    { href: "/pages/admission/children/add", label: "إضافة طفل", icon: Home },
+    { href: "/pages/admission/children/my", label: "الأطفال", icon: Baby },
+    { href: "/pages/admission/children/my/analysis", label: "تحليل الذكاء", icon: Brain },
+    { href: "/pages/admission/children/my/suggestions", label: "اقتراحات الذكاء", icon: Brain },
+    { href: "/pages/admission/children/my/applications", label: "طلباتي", icon: Inbox },
+    { href: "/pages/admission/schools", label: "المدارس", icon: School },
+    { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
+  ],
+  school_owner: [
+    { href: "/pages/admission/me/schools", label: "مدارسي", icon: School },
+    { href: "/pages/admission/me/schools/applications", label: "الطلبات", icon: Inbox },
+    { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
+  ],
+  moderator: [
+    { href: "/pages/moderation/tasks", label: "المهام", icon: ShieldCheck },
+    { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
+  ],
+  admin: [
+    { href: "/pages/admin/users", label: "المستخدمين", icon: Users },
+    { href: "/pages/admin/schools", label: "المدارس", icon: School },
+    { href: "/pages/admin/logs", label: "السجلات", icon: FileText },
+    { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
+  ],
+}
+
 export function UserDropdown({
   dictionary,
   locale,
@@ -26,9 +69,12 @@ export function UserDropdown({
 }: {
   dictionary: DictionaryType
   locale: LocaleType
-  user?: { name?: string; email?: string; avatar?: string, role?: string }
+  user?: { name?: string; email?: string; avatar?: string; role?: string }
 }) {
-  
+  const pathname = usePathname()
+  const role = user?.role || "parent"
+  const links = menu[role] || []
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -46,7 +92,8 @@ export function UserDropdown({
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent forceMount>
+      <DropdownMenuContent align="end" className="w-64">
+        {/* User Info */}
         <DropdownMenuLabel className="flex gap-2">
           <Avatar>
             <AvatarImage src={user?.avatar} alt="Avatar" />
@@ -61,8 +108,33 @@ export function UserDropdown({
             </p>
           </div>
         </DropdownMenuLabel>
+
         <DropdownMenuSeparator />
-        <DropdownMenuGroup className="max-w-48">
+
+        {/* Dynamic Sidebar Links */}
+        <DropdownMenuGroup className="max-h-[250px] overflow-auto">
+          {links.map((link) => {
+            const isActive = pathname === link.href
+            const Icon = link.icon
+            return (
+              <DropdownMenuItem
+                asChild
+                key={link.href}
+                className={cn(isActive && "bg-muted font-bold")}
+              >
+                <Link href={ensureLocalizedPathname(link.href, locale)} className="flex items-center gap-2 w-full">
+                  <Icon className="w-4 h-4" />
+                  <span>{link.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            )
+          })}
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator />
+
+        {/* Profile + Settings */}
+        <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link
               href={ensureLocalizedPathname(user?.role === 'admin' ? "/pages/account/profile" : "/pages/admission/me", locale)}
@@ -80,9 +152,12 @@ export function UserDropdown({
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
+
         <DropdownMenuSeparator />
+
+        {/* Logout */}
         <DropdownMenuItem>
-          <LogoutButton/>
+          <LogoutButton />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
