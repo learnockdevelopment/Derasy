@@ -30,10 +30,6 @@ import {
   FileText,
   ShieldCheck,
 } from "lucide-react"
-
-import type { DictionaryType } from "@/lib/get-dictionary"
-import type { LocaleType } from "@/types"
-
 // Menu structure from your Sidebar
 const menu = {
   parent: [
@@ -66,10 +62,6 @@ export function UserDropdown({
   dictionary,
   locale,
   user
-}: {
-  dictionary: DictionaryType
-  locale: LocaleType
-  user?: { name?: string; email?: string; avatar?: string; role?: string }
 }) {
   const pathname = usePathname()
   const role = user?.role || "parent"
