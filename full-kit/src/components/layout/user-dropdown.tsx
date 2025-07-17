@@ -37,7 +37,7 @@ import type { LocaleType } from "@/types"
 // Menu structure from your Sidebar
 const menu = {
   parent: [
-    { href: "/pages/admission/children/add", label: "إضافة طفل", icon: Home },
+    { href: "/pages/admission/children", label: "إضافة طفل", icon: Home },
     { href: "/pages/admission/children/my", label: "الأطفال", icon: Baby },
     { href: "/pages/admission/children/my/analysis", label: "تحليل الذكاء", icon: Brain },
     { href: "/pages/admission/children/my/suggestions", label: "اقتراحات الذكاء", icon: Brain },

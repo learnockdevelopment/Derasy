@@ -14,7 +14,7 @@ const childSchema = new mongoose.Schema(
     },
     ageInOctober: { type: Number }, // ✅ Virtual field for age in coming October
     fullName: { type: String, required: true },
-    nationality: { type: String, required: true },
+    nationality: { type: String, required: true, default: "Egyptian" },
     gender: { type: String, enum: ["male", "female"], required: true },
     birthDate: { type: Date, required: true },
     nationalId: { type: String },
