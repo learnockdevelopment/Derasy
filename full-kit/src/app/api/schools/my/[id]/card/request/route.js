@@ -82,7 +82,10 @@ export async function GET(req, { params }) {
     const requests = await StudentIdCardRequest.find({
       school: schoolId,
       student: user.id,
-    }).sort({ createdAt: -1 });
+    })
+      .populate('school') // Only fetch name and logo of the school
+      .populate('student') // Only fetch name and email of the student
+      .sort({ createdAt: -1 });
 
     console.log(`📄 Found ${requests.length} card requests for student ${user.id}`);
 

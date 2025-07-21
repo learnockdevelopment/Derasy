@@ -44,8 +44,8 @@ export async function POST(req, { params }) {
       fileName: `card-background-${school._id}-${Date.now()}`,
       folder: `/card-backgrounds/${school._id}`,
     });
-console.log('Upload successful:', upload);
-school.idCard.url = upload.url;
+    console.log('Upload successful:', upload);
+    school.idCard.url = upload.url;
     school.idCard.publicId = upload.fileId;
     await school.save();
 
