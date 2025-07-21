@@ -42,7 +42,7 @@ export async function POST(req) {
         email: user.email,
         role: user.role
       },
-      redirectUrl: user.role !== 'admin' ? '/pages/admission/me' : '/dashboards/analytics'
+      redirectUrl: user.role !== 'admin' ? '/pages/admission/me' : '/dashboards/crm'
     });
   } catch (error) {
     console.error("❌ Login error:", error);
