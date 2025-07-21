@@ -7,13 +7,22 @@ const nextConfig = {
   experimental: {
     turbo: false,
   },
-images: {
+  images: {
     domains: ['ik.imagekit.io'],
   },
   // See https://lucide.dev/guide/packages/lucide-react#nextjs-example
   transpilePackages: ["lucide-react"],
   eslint: {
     ignoreDuringBuilds: true, // ✅ disables ESLint during builds
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        canvas: false, // prevent canvas from being bundled client-side
+      };
+    }
+    return config;
   },
   // See https://nextjs.org/docs/app/building-your-application/routing/redirecting#redirects-in-nextconfigjs
   async redirects() {

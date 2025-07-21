@@ -15,7 +15,10 @@ const schoolSchema = new mongoose.Schema({
     enum: ["Public", "Private", "International", "National", "Experimental", "Language"],
     required: true
   },
-
+  idCard: {
+    url: { type: String },
+    publicId: { type: String },
+  },
   ownership: {
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     moderators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
@@ -34,6 +37,26 @@ const schoolSchema = new mongoose.Schema({
     },
     facilities: [String], // e.g. ["Sports Hall", "Library", "Bus Service"]
   }],
+  studentIdCardFields: [
+    {
+      key: { type: String, required: true },
+      type: {
+        type: String,
+        enum: ['text', 'number', 'date', 'photo', 'select'],
+        default: 'text'
+      },
+      options: [String], // used if type is "select"
+      style: {
+        x: { type: Number, default: 0 },
+        y: { type: Number, default: 0 },
+        fontSize: { type: Number, default: 14 },
+        fontWeight: { type: String, enum: ['normal', 'bold'], default: 'normal' },
+        color: { type: String, default: '#000000' },
+        width: { type: Number },   // for image/photo types
+        height: { type: Number }   // for image/photo types
+      }
+    }
+  ],
 
   gradesOffered: [String], // e.g. ["KG1", "KG2", "Primary 1", ...]
   ageRequirement: {

@@ -11,6 +11,7 @@ import {
   Building2,
 } from 'lucide-react';
 import Swal from 'sweetalert2';
+import Link from 'next/link';
 
 export default function MySchoolsPage() {
   const [schools, setSchools] = useState([]);
@@ -75,9 +76,11 @@ export default function MySchoolsPage() {
               <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-xl z-0" />
               <div className="relative z-10 p-5 space-y-4 min-h-[280px] flex flex-col justify-between">
                 <div className="border-b border-white/30 pb-2 text-center">
-                  <h2 className="text-xl font-bold flex items-center justify-center gap-2">
-                    <Building2 className="w-6 h-6" /> {school.name}
-                  </h2>
+                  <Link href={`/pages/admission/me/schools/${school._id}`}>
+  <h2 className="text-xl font-bold flex items-center justify-center gap-2 cursor-pointer hover:underline">
+    <Building2 className="w-6 h-6" /> {school.name}
+  </h2>
+</Link>
                   <p className="text-sm text-white/80 mt-1">
                     🏷️ {school.type === 'International' ? 'دولي' : school.type === 'Private' ? 'خاص' : school.type}
                   </p>
