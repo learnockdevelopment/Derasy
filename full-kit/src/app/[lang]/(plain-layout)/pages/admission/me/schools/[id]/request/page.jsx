@@ -18,7 +18,7 @@ export default function StudentCardRequestForm() {
       try {
         const res = await fetch(`/api/schools/my/${id}`);
         const data = await res.json();
-console.log('Fetched fields:', data);
+        console.log('Fetched fields:', data);
         if (!res.ok) throw new Error(data.message);
         setFields(data.school?.studentIdCardFields || []);
         setTemplateImage(data.school?.idCard.url || '');
@@ -39,6 +39,7 @@ console.log('Fetched fields:', data);
   async function handleSubmit(e) {
     e.preventDefault();
 
+    // تحقق من الحقول المطلوبة
     for (const field of fields) {
       if (!formData[field.key]) {
         Swal.fire({ icon: 'warning', title: 'تنبيه', text: `يرجى تعبئة ${field.key}` });
@@ -47,12 +48,44 @@ console.log('Fetched fields:', data);
     }
 
     try {
-      console.log('Submitting:', formData);
-      Swal.fire({ icon: 'success', title: 'تم الإرسال بنجاح' });
+      const fd = new FormData();
+      fd.append('schoolId', id);
+
+      const fieldsArray = [];
+
+      for (const field of fields) {
+        const key = field.key;
+        const value = formData[key];
+
+        if (field.type === 'photo' && value instanceof File) {
+          fd.append(`photo_${key}`, value); // نرسل الصورة بهذا المفتاح
+          fieldsArray.push({ key, value: `photo_${key}` }); // نُرسل اسم المفتاح فقط
+        } else {
+          fieldsArray.push({ key, value });
+        }
+      }
+
+      fd.append('fields', JSON.stringify(fieldsArray));
+
+      // ✅ استخراج التوكن من document.cookie
+      const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
+      const token = match ? match[1] : null;
+
+      const res = await fetch(`/api/schools/my/${id}/card/request`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: fd,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'فشل الإرسال');
+
+      Swal.fire({ icon: 'success', title: 'تم الإرسال بنجاح', text: 'تم إرسال طلب بطاقة الطالب' });
     } catch (err) {
       Swal.fire({ icon: 'error', title: 'خطأ', text: err.message });
     }
   }
+
 
   if (loading) return <p className="text-center mt-10">جاري تحميل البيانات...</p>;
 
