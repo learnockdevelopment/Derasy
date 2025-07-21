@@ -55,7 +55,6 @@ export function UserDropdown({
     school_owner: [
       { href: "/pages/admission/me/schools", label: "مدارسي", icon: School },
       { href: "/pages/admission/me/schools/applications", label: "الطلبات", icon: Inbox },
-      { href: `/pages/admission/me/id-requests`, label: "حقول كروت الهوية", icon: IdCard },
       { href: `/pages/admission/me/id-requests`, label: "طلبات كروت الهوية", icon: IdCard },
       { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
     ],
