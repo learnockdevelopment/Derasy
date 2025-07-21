@@ -1,10 +1,10 @@
-import type { NavigationType } from "@/types"
+import type {
+  NavigationType
+} from "@/types"
 
-export const navigationsData: NavigationType[] = [
-  {
+export const navigationsData: NavigationType[] = [{
     title: "Dashboards",
-    items: [
-      {
+    items: [{
         title: "Analytics",
         href: "/dashboards/analytics",
         iconName: "ChartPie",
@@ -15,6 +15,11 @@ export const navigationsData: NavigationType[] = [
         iconName: "ChartBar",
       },
       {
+        title: "Cards",
+        href: "/dashboards/cards-requests",
+        iconName: "IdCard",
+      },
+      {
         title: "eCommerce",
         href: "/dashboards/ecommerce",
         iconName: "ShoppingCart",
@@ -23,8 +28,7 @@ export const navigationsData: NavigationType[] = [
   },
   {
     title: "Pages",
-    items: [
-      {
+    items: [{
         title: "Landing",
         href: "/pages/landing",
         label: "New",
@@ -59,8 +63,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Fallback",
         iconName: "Replace",
-        items: [
-          {
+        items: [{
             title: "Coming Soon",
             href: "/pages/coming-soon",
           },
@@ -81,8 +84,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Authentication",
         iconName: "LogIn",
-        items: [
-          {
+        items: [{
             title: "Forgot Password",
             href: "/forgot-password",
           },
@@ -107,8 +109,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Products",
         iconName: "Package",
-        items: [
-          {
+        items: [{
             title: "List",
             href: "/",
             label: "Soon",
@@ -128,8 +129,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Orders",
         iconName: "ShoppingBasket",
-        items: [
-          {
+        items: [{
             title: "List",
             href: "/",
             label: "Soon",
@@ -144,8 +144,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Customers",
         iconName: "Users",
-        items: [
-          {
+        items: [{
             title: "List",
             href: "/",
             label: "Soon",
@@ -161,8 +160,7 @@ export const navigationsData: NavigationType[] = [
   },
   {
     title: "Apps",
-    items: [
-      {
+    items: [{
         title: "Email",
         href: "/apps/email",
         iconName: "AtSign",
@@ -192,8 +190,7 @@ export const navigationsData: NavigationType[] = [
   },
   {
     title: "Design System",
-    items: [
-      {
+    items: [{
         title: "Colors",
         iconName: "SwatchBook",
         href: "/colors",
@@ -206,8 +203,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "UI",
         iconName: "LayoutGrid",
-        items: [
-          {
+        items: [{
             title: "Accordion",
             href: "/ui/accordion",
           },
@@ -396,8 +392,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Extended UI",
         iconName: "LayoutDashboard",
-        items: [
-          {
+        items: [{
             title: "Avatar Stack",
             href: "/extended-ui/avatar-stack",
           },
@@ -433,7 +428,10 @@ export const navigationsData: NavigationType[] = [
             title: "Input Tags",
             href: "/extended-ui/input-tags",
           },
-          { title: "Emoji Picker", href: "/extended-ui/emoji-picker" },
+          {
+            title: "Emoji Picker",
+            href: "/extended-ui/emoji-picker"
+          },
           {
             title: "Keyboard",
             href: "/extended-ui/keyboard",
@@ -471,8 +469,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Forms",
         iconName: "TextCursorInput",
-        items: [
-          {
+        items: [{
             title: "Basic Inputs",
             href: "/forms/basic-inputs",
           },
@@ -502,8 +499,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Charts",
         iconName: "ChartArea",
-        items: [
-          {
+        items: [{
             title: "Area Charts",
             href: "/charts/area-charts",
           },
@@ -544,8 +540,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Icons",
         iconName: "Smile",
-        items: [
-          {
+        items: [{
             title: "Lucide",
             href: "/icons/lucide",
           },
@@ -558,8 +553,7 @@ export const navigationsData: NavigationType[] = [
       {
         title: "Cards",
         iconName: "SquareSquare",
-        items: [
-          {
+        items: [{
             title: "Basic",
             href: "/cards/basic",
           },

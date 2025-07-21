@@ -43,6 +43,33 @@ export default function StudentCardViewPage() {
 
   if (!request)
     return <p className="text-center mt-10 text-gray-600">لم يتم العثور على الطلب</p>;
+  function getPercentageStyle(style = {}, realWidth = 350, realHeight = 220) {
+    const percent = {
+      left: `${((style.x || 0) / realWidth) * 100}%`,
+      top: `${((style.y || 0) / realHeight) * 100}%`,
+      width: `${((style.width || 100) / realWidth) * 100}%`,
+      height: `${((style.height || 30) / realHeight) * 100}%`,
+    };
+
+    return {
+      position: 'absolute',
+      left: percent.left,
+      top: percent.top,
+      width: percent.width,
+      height: percent.height,
+      fontSize: `${style.fontSize || 14}px`,
+      fontWeight: style.fontWeight || 'normal',
+      color: style.color || '#000',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      textAlign: style.textAlign || 'center',
+      backgroundColor: 'transparent',
+      padding: '2px',
+      borderRadius: '4px',
+      zIndex: 10,
+    };
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -66,24 +93,8 @@ export default function StudentCardViewPage() {
             const style = field.style || {};
             const submittedValue = request.fields?.find(f => f.key === field.key)?.value;
 
-            const commonStyle = {
-              position: 'absolute',
-              left: `${style.x || 0}px`,
-              top: `${style.y || 0}px`,
-              width: `${style.width || 100}px`,
-              height: `${style.height || 30}px`,
-              fontSize: `${style.fontSize || 14}px`,
-              fontWeight: style.fontWeight || 'normal',
-              color: style.color || '#000',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              textAlign: style.textAlign || 'center',
-              backgroundColor: 'transparent',
-              padding: '2px',
-              borderRadius: '4px',
-              zIndex: 10,
-            };
+            const commonStyle = getPercentageStyle(style);
+
 
             if (field.type === 'photo' && submittedValue?.startsWith('http')) {
               return (
