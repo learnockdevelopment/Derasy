@@ -3,10 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-
-import type { DictionaryType } from "@/lib/get-dictionary"
-import type { LocaleType } from "@/types"
-
 import { ensureLocalizedPathname } from "@/lib/i18n"
 
 import { LanguageDropdown } from "@/components/language-dropdown"
@@ -18,11 +14,10 @@ import { ToggleMobileSidebar } from "../toggle-mobile-sidebar"
 
 export function BottomBarHeader({
   dictionary,
-}: {
-  dictionary: DictionaryType
+  user
 }) {
   const params = useParams()
-  const locale = params.lang as LocaleType
+  const locale = params.lang
 
   return (
     <div className="container flex h-14 justify-between items-center gap-4">
@@ -45,7 +40,7 @@ export function BottomBarHeader({
         <FullscreenToggle />
         <ModeDropdown dictionary={dictionary} />
         <LanguageDropdown dictionary={dictionary} />
-        <UserDropdown dictionary={dictionary} locale={locale} />
+        <UserDropdown dictionary={dictionary} locale={locale} user={user}/>
       </div>
     </div>
   )
