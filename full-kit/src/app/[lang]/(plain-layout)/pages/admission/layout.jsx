@@ -8,16 +8,16 @@ export default async function DashboardLayout({ children, params }) {
   const dictionary = await getDictionary(params.lang);
 
   const safeUser = {
-    id: user._id?.toString?.() || '',
-    fullName: user.name || '',
-    email: user.email || '',
-    role: user.role || '',
-    wallet: user.wallet || 0,
-    emailVerified: user.emailVerified || false,
-    createdAt: user.createdAt?.toString?.() || '',
-    updatedAt: user.updatedAt?.toString?.() || '',
-    token: user.token || '',
-    ownedSchools: (user.ownedSchools || []).map((school) => ({
+    id: user?._id?.toString?.() || '',
+    fullName: user?.name || '',
+    email: user?.email || '',
+    role: user?.role || '',
+    wallet: user?.wallet || 0,
+    emailVerified: user?.emailVerified || false,
+    createdAt: user?.createdAt?.toString?.() || '',
+    updatedAt: user?.updatedAt?.toString?.() || '',
+    token: user?.token || '',
+    ownedSchools: (user?.ownedSchools || []).map((school) => ({
       id: school._id?.toString?.() || '',
       name: school.name || '',
       ownership: {

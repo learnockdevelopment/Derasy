@@ -16,7 +16,7 @@ export default function StudentCardRequestForm() {
     if (!id) return;
     async function fetchFields() {
       try {
-        const res = await fetch(`/api/schools/my/${id}`);
+        const res = await fetch(`/api/schools/my/public/${id}`);
         const data = await res.json();
         console.log('Fetched fields:', data);
         if (!res.ok) throw new Error(data.message);
