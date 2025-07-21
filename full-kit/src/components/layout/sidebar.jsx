@@ -4,14 +4,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { useParams, usePathname } from "next/navigation"
 import { ChevronDown } from "lucide-react"
-
-import type { DictionaryType } from "@/lib/get-dictionary"
-import type {
-  LocaleType,
-  NavigationNestedItem,
-  NavigationRootItem,
-} from "@/types"
-
 import { navigationsData } from "@/data/navigations"
 
 import { i18n } from "@/configs/i18n"
@@ -46,13 +38,13 @@ import {
 import { DynamicIcon } from "@/components/dynamic-icon"
 import { CommandMenu } from "./command-menu"
 
-export function Sidebar({ dictionary }: { dictionary: DictionaryType }) {
+export function Sidebar({ dictionary, user }) {
   const pathname = usePathname()
   const params = useParams()
   const { openMobile, setOpenMobile, isMobile } = useSidebar()
   const { settings } = useSettings()
 
-  const locale = params.lang as LocaleType
+  const locale = params.lang
   const direction = i18n.localeDirection[locale]
   const isRTL = direction === "rtl"
   const isHoizontalAndDesktop = settings.layout === "horizontal" && !isMobile
@@ -60,7 +52,7 @@ export function Sidebar({ dictionary }: { dictionary: DictionaryType }) {
   // If the layout is horizontal and not on mobile, don't render the sidebar. (We use a menubar for horizontal layout navigation.)
   if (isHoizontalAndDesktop) return null
 
-  const renderMenuItem = (item: NavigationRootItem | NavigationNestedItem) => {
+  const renderMenuItem = (item) => {
     const title = getDictionaryValue(
       titleCaseToCamelCase(item.title),
       dictionary.navigation
@@ -91,7 +83,7 @@ export function Sidebar({ dictionary }: { dictionary: DictionaryType }) {
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <SidebarMenuSub>
-              {item.items.map((subItem: NavigationNestedItem) => (
+              {item.items.map((subItem) => (
                 <SidebarMenuItem key={subItem.title}>
                   {renderMenuItem(subItem)}
                 </SidebarMenuItem>

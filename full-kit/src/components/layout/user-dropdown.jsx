@@ -29,34 +29,11 @@ import {
   Users,
   FileText,
   ShieldCheck,
+  IdCard, // ✅ Add this icon
 } from "lucide-react"
-// Menu structure from your Sidebar
-const menu = {
-  parent: [
-    { href: "/pages/admission/children", label: "إضافة طفل", icon: Home },
-    { href: "/pages/admission/children/my", label: "الأطفال", icon: Baby },
-    { href: "/pages/admission/children/my/analysis", label: "تحليل الذكاء", icon: Brain },
-    { href: "/pages/admission/children/my/suggestions", label: "اقتراحات الذكاء", icon: Brain },
-    { href: "/pages/admission/children/my/applications", label: "طلباتي", icon: Inbox },
-    { href: "/pages/admission/schools", label: "المدارس", icon: School },
-    { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
-  ],
-  school_owner: [
-    { href: "/pages/admission/me/schools", label: "مدارسي", icon: School },
-    { href: "/pages/admission/me/schools/applications", label: "الطلبات", icon: Inbox },
-    { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
-  ],
-  moderator: [
-    { href: "/pages/moderation/tasks", label: "المهام", icon: ShieldCheck },
-    { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
-  ],
-  admin: [
-    { href: "/pages/admin/users", label: "المستخدمين", icon: Users },
-    { href: "/pages/admin/schools", label: "المدارس", icon: School },
-    { href: "/pages/admin/logs", label: "السجلات", icon: FileText },
-    { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
-  ],
-}
+
+
+
 
 export function UserDropdown({
   dictionary,
@@ -65,8 +42,39 @@ export function UserDropdown({
 }) {
   const pathname = usePathname()
   const role = user?.role || "parent"
+  const menu = {
+    parent: [
+      { href: "/pages/admission/children", label: "إضافة طفل", icon: Home },
+      { href: "/pages/admission/children/my", label: "الأطفال", icon: Baby },
+      { href: "/pages/admission/children/my/analysis", label: "تحليل الذكاء", icon: Brain },
+      { href: "/pages/admission/children/my/suggestions", label: "اقتراحات الذكاء", icon: Brain },
+      { href: "/pages/admission/children/my/applications", label: "طلباتي", icon: Inbox },
+      { href: "/pages/admission/schools", label: "المدارس", icon: School },
+      { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
+    ],
+    school_owner: [
+      { href: "/pages/admission/me/schools", label: "مدارسي", icon: School },
+      { href: "/pages/admission/me/schools/applications", label: "الطلبات", icon: Inbox },
+      { href: `/pages/admission/me/id-requests`, label: "حقول كروت الهوية", icon: IdCard },
+      { href: `/pages/admission/me/id-requests`, label: "طلبات كروت الهوية", icon: IdCard },
+      { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
+    ],
+    moderator: [
+      { href: "/pages/moderation/tasks", label: "المهام", icon: ShieldCheck },
+      { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
+    ],
+    admin: [
+      { href: "/pages/admin/users", label: "المستخدمين", icon: Users },
+      { href: "/pages/admin/schools", label: "المدارس", icon: School },
+      { href: "/pages/admin/schools/id-cards/requests", label: "طلبات كروت الهوية", icon: IdCard },
+      { href: "/pages/admin/logs", label: "السجلات", icon: FileText },
+      { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
+    ],
+  }
   const links = menu[role] || []
 
+  console.log(user)
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -79,7 +87,7 @@ export function UserDropdown({
           <Avatar className="size-9">
             <AvatarImage src={user?.avatar} alt="" />
             <AvatarFallback className="bg-transparent">
-              {user?.name && getInitials(user.name)}
+              {user?.fullName && getInitials(user.fullName)}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -90,11 +98,11 @@ export function UserDropdown({
           <Avatar>
             <AvatarImage src={user?.avatar} alt="Avatar" />
             <AvatarFallback className="bg-transparent">
-              {user?.name && getInitials(user.name)}
+              {user?.fullName && getInitials(user.fullName)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col overflow-hidden">
-            <p className="text-sm font-medium truncate">{user?.name}</p>
+            <p className="text-sm font-medium truncate">{user?.fullName}</p>
             <p className="text-xs text-muted-foreground font-semibold truncate">
               {user?.email}
             </p>

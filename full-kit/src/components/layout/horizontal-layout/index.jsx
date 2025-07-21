@@ -12,7 +12,7 @@ export async function HorizontalLayout({
     
   return (
     <>
-      <Sidebar dictionary={dictionary} />
+      <Sidebar dictionary={dictionary} user={user} />
       <div className="w-full">
         <HorizontalLayoutHeader dictionary={dictionary} user={user} />
         <main className="min-h-[calc(100svh-9.85rem)] bg-muted/40">

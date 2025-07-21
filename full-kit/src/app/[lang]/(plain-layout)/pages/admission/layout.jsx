@@ -7,15 +7,34 @@ export default async function DashboardLayout({ children, params }) {
   const user = await getCurrentUser();
   const dictionary = await getDictionary(params.lang);
 
-  const safeUser = user
-    ? {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-      }
-    : null;
+  const safeUser = {
+    id: user._id?.toString?.() || '',
+    fullName: user.name || '',
+    email: user.email || '',
+    role: user.role || '',
+    wallet: user.wallet || 0,
+    emailVerified: user.emailVerified || false,
+    createdAt: user.createdAt?.toString?.() || '',
+    updatedAt: user.updatedAt?.toString?.() || '',
+    token: user.token || '',
+    ownedSchools: (user.ownedSchools || []).map((school) => ({
+      id: school._id?.toString?.() || '',
+      name: school.name || '',
+      ownership: {
+        owner: {
+          id: school.ownership?.owner?._id?.toString?.() || '',
+          fullName: school.ownership?.owner?.fullName || '',
+          email: school.ownership?.owner?.email || '',
+        },
+        moderators: (school.ownership?.moderators || []).map((mod) => ({
+          id: mod._id?.toString?.() || '',
+          fullName: mod.fullName || '',
+          email: mod.email || '',
+        })),
+      },
+    })),
+  };
+
 
   return (
     <div className="min-h-screen flex w-full font-[Cairo]">

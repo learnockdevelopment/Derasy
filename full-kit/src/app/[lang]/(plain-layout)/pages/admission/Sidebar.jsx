@@ -25,7 +25,9 @@ import {
   Users,
   FileText,
   ShieldCheck,
+  IdCard, // 👈 Add this for ID Card icon
 } from "lucide-react"
+
 
 const menu = {
   parent: [
@@ -40,8 +42,11 @@ const menu = {
   school_owner: [
     { href: "/pages/admission/me/schools", label: "مدارسي", icon: School },
     { href: "/pages/admission/me/schools/applications", label: "الطلبات", icon: Inbox },
+    { href: "/pages/admission/me/schools/id-cards/fields", label: "حقول كروت الهوية", icon: IdCard },
+    { href: "/pages/admission/me/schools/id-cards/requests", label: "طلبات كروت الهوية", icon: IdCard },
     { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
   ],
+
   moderator: [
     { href: "/pages/moderation/tasks", label: "المهام", icon: ShieldCheck },
     { href: "/pages/admission/me", label: "الإعدادات", icon: Settings },
