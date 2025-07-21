@@ -1,10 +1,6 @@
 "use client"
 
 import { useParams } from "next/navigation"
-
-import type { DictionaryType } from "@/lib/get-dictionary"
-import type { LocaleType } from "@/types"
-
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { LanguageDropdown } from "@/components/language-dropdown"
 import { FullscreenToggle } from "@/components/layout/full-screen-toggle"
@@ -14,13 +10,11 @@ import { ModeDropdown } from "@/components/mode-dropdown"
 import { ToggleMobileSidebar } from "../toggle-mobile-sidebar"
 
 export function VerticalLayoutHeader({
-  dictionary,
-}: {
-  dictionary: DictionaryType
+  dictionary, user
 }) {
   const params = useParams()
 
-  const locale = params.lang as LocaleType
+  const locale = params.lang
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background border-b border-sidebar-border">
@@ -32,7 +26,7 @@ export function VerticalLayoutHeader({
           <FullscreenToggle />
           <ModeDropdown dictionary={dictionary} />
           <LanguageDropdown dictionary={dictionary} />
-          <UserDropdown dictionary={dictionary} locale={locale} />
+          <UserDropdown dictionary={dictionary} locale={locale} user={user}/>
         </div>
       </div>
     </header>

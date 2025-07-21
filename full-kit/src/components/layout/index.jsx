@@ -16,7 +16,7 @@ export function Layout({
       <Customizer />
       {/* If the layout is vertical, render a vertical layout; otherwise, render a horizontal layout */}
       {isVertical ? (
-        <VerticalLayout dictionary={dictionary}>{children}</VerticalLayout>
+        <VerticalLayout user={user} dictionary={dictionary}>{children}</VerticalLayout>
       ) : (
         <HorizontalLayout user={user} dictionary={dictionary}>{children}</HorizontalLayout>
       )}
