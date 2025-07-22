@@ -5,13 +5,17 @@ import { useParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { IdCard } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { useUser } from "@/contexts/user-context"
+import BrandingBanner from '../../../../../../../components/branding-banner';
 export default function StudentCardRequestsPage() {
   const [requests, setRequests] = useState([]);
   const [templateImage, setTemplateImage] = useState('');
   const [fieldsConfig, setFieldsConfig] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const user = useUser();
+  const router = useRouter();
   useEffect(() => {
 
     async function fetchData() {
@@ -46,8 +50,19 @@ export default function StudentCardRequestsPage() {
   if (loading) return <p className="text-center mt-10">جاري تحميل الطلبات...</p>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-
+    <div className="container mx-auto p-6 font-[Cairo]">
+      {/* 🌟 Branding Slogan Banner */}
+      <BrandingBanner user={user} content={'ادارة كرنيهات الطلاب بسهولة'} pageTitle={"طلبات الكارنيهات"} actionButton={
+        <button
+          className="flex items-center gap-2 border border-purple-600 text-purple-700 hover:bg-purple-50 px-5 py-2 text-sm rounded transition"
+          onClick={() => {
+            router.push("/pages/admission/me/schools");
+          }}
+        >
+          <IdCard className="w-4 h-4" />
+          تعديل حقول بطاقة الطالب
+        </button>
+      } />
       {/* 🟢 عرض الطلبات */}
       {requests.length === 0 ? (
         <p className="text-center text-gray-600">لا توجد طلبات حالياً</p>
@@ -121,10 +136,9 @@ export default function StudentCardRequestsPage() {
                 <div className="text-center mt-2">
                   <span
                     className={`inline-block px-3 py-1 rounded-full text-xs font-semibold 
-                      ${
-                        req.status === 'approved'
-                          ? 'bg-green-100 text-green-700'
-                          : req.status === 'rejected'
+                      ${req.status === 'approved'
+                        ? 'bg-green-100 text-green-700'
+                        : req.status === 'rejected'
                           ? 'bg-red-100 text-red-700'
                           : 'bg-gray-100 text-gray-700'
                       }`}
@@ -132,8 +146,8 @@ export default function StudentCardRequestsPage() {
                     {req.status === 'approved'
                       ? 'تم القبول'
                       : req.status === 'rejected'
-                      ? 'مرفوض'
-                      : 'قيد المراجعة'}
+                        ? 'مرفوض'
+                        : 'قيد المراجعة'}
                   </span>
                 </div>
               </div>
