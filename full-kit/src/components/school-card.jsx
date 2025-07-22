@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Building2, ExternalLink, Globe, MapPin, Phone } from "lucide-react";
+import { Settings, Globe2, IdCard } from 'lucide-react'; // or your preferred icon lib
 
 export default function SchoolCard({ school }) {
   return (
@@ -82,25 +83,42 @@ export default function SchoolCard({ school }) {
         </div>
       </div>
 
+
       {/* Footer Action */}
-      <div className="py-4 border-t flex justify-between gap-2">
+      <div className="py-4 border-t flex flex-wrap justify-end gap-4 font-[Cairo]">
         <Link
           href={`/pages/admission/me/schools/${school._id}`}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700"
+          className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition"
+          aria-label="إدارة المدرسة"
+          title="إدارة المدرسة"
         >
-          إدارة المدرسة
+          <Settings className="w-5 h-5" />
         </Link>
+
         {school.website && (
-          <a
+          <Link
             href={school.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-gray-100 text-gray-800 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-200"
+            className="bg-gray-100 text-gray-800 p-3 rounded-full hover:bg-gray-200 transition"
+            aria-label="زيارة الموقع"
+            title="زيارة الموقع"
           >
-            زيارة الموقع
-          </a>
+            <Globe2 className="w-5 h-5" />
+          </Link>
         )}
+
+        <Link
+          href={`/pages/admission/me/schools/${school._id}/student-id-card`}
+          className="bg-yellow-400 text-yellow-900 p-3 rounded-full hover:bg-yellow-500 transition"
+          aria-label="إعداد كارت الطالب"
+          title="إعداد كارت الطالب"
+        >
+          <IdCard className="w-5 h-5" />
+        </Link>
       </div>
+
+
     </div>
   );
 }
