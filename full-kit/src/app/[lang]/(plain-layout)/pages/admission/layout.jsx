@@ -37,7 +37,7 @@ export default async function DashboardLayout({ children, params }) {
 
 
   return (
-    <div className="min-h-screen flex w-full font-[Cairo]">
+    <div className="min-h-screen flex w-full font-[Cairo] ">
       {/* {user && <Sidebar user={safeUser} />} */}
 
       <div className="flex-1 flex flex-col w-full">

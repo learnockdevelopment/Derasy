@@ -20,8 +20,8 @@ export async function GET(req, { params }) {
     }
 
     const school = await School.findById(id)
-      .populate('ownership.owner', 'fullName email')
-      .populate('ownership.moderators', 'fullName email')
+      .populate('ownership.owner')
+      .populate('ownership.moderators')
       .lean();
 
     if (!school) {

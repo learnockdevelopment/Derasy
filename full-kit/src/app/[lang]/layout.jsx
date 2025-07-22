@@ -81,12 +81,14 @@ export default async function RootLayout(props) {
           cairoFont.variable
         )}
       >
-        <Providers locale={params.lang} direction={direction} session={session} user={safeUser}>
+        <main className="flex min-h-screen flex-col pt-16">
+          <Providers locale={params.lang} direction={direction} session={session} user={safeUser}>
             {children}
             {user && <AssistantChat avatar={user?.avatar ?? ""} token={user?.token ?? ""} />}
             <Toaster />
             <Sonner />
-        </Providers>
+          </Providers>
+        </main>
       </body>
     </html>
   )
