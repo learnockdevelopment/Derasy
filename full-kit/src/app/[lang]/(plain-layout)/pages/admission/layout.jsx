@@ -44,7 +44,7 @@ export default async function DashboardLayout({ children, params }) {
         <LandingHeader dictionary={dictionary} dashboard={false} user={safeUser} />
 
         {/* 🌟 Branding Slogan Banner */}
-        <div className="bg-white border-y border-gray-200 py-6 px-4 text-center shadow-sm mt-15">
+        <div className="bg-white border-y border-gray-200 py-6 px-4 text-center shadow-sm mt-25">
           <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
             نحن منصّة دراسي – نُعلّم، نُرشد، ونفتح أبواب المستقبل.
           </h2>

@@ -21,8 +21,6 @@ export async function GET(req, { params }) {
 
     const request = await StudentIdCardRequest.findOne({
       _id: requestId,
-      school: schoolId,
-      student: user.id,
     })
       .populate('school')
       .populate('student');
