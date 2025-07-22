@@ -44,7 +44,7 @@ export default function SchoolProfilePage() {
           alt="School Banner"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-300  backdrop-blur-sm flex items-end justify-between p-6 text-white rounded-3xl">
+        <div className="absolute inset-0 bg-gradient-to-tr from-black to-purple-600  backdrop-blur-sm flex items-end justify-between p-6 text-white rounded-3xl">
           <div>
             <h1 className="text-3xl font-bold drop-shadow">{school.name}</h1>
             <p className="text-sm">{school.type === 'Private' ? '🏫 مدرسة خاصة' : school.type === 'International' ? '🌍 مدرسة دولية' : '🏫 مدرسة حكومية'}</p>
@@ -60,7 +60,7 @@ export default function SchoolProfilePage() {
             </button>
             <button
               onClick={() => router.push(`/pages/admission/me/schools/${id}/pvc-id-generator`)}
-              className="bg-yellow-400 text-shadow-lg text-white px-4 py-2 rounded-full hover:bg-yellow-500 flex items-center gap-2 transition-all"
+              className="bg-yellow-400 text-shadow-lg text-foreground px-4 py-2 rounded-full hover:bg-yellow-500 flex items-center gap-2 transition-all"
             >
               <Sparkles size={18} />
               إعداد كارت الطالب
