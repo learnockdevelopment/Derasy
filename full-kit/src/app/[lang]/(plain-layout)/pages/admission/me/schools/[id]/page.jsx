@@ -3,13 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Swal from 'sweetalert2';
-
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { useUser } from "@/contexts/user-context"
+import BrandingBanner from '../../../../../../../../components/branding-banner';
 export default function EditSchoolPage() {
+  const user = useUser();
   const cookieString = document.cookie;
-    const token = cookieString
-      .split('; ')
-      .find(row => row.startsWith('token='))
-      ?.split('=')[1];
+  const token = cookieString
+    .split('; ')
+    .find(row => row.startsWith('token='))
+    ?.split('=')[1];
   const router = useRouter();
   const { id } = useParams();
 
@@ -36,38 +39,39 @@ export default function EditSchoolPage() {
     fetchSchool();
   }, [id]);
 
-async function handleSave(e) {
-  e.preventDefault();
+  async function handleSave(e) {
+    e.preventDefault();
 
-  try {
-    
-    if (!token) throw new Error('Authentication token not found in cookies');
+    try {
 
-    const res = await fetch(`/api/schools/my/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(school),
-    });
+      if (!token) throw new Error('Authentication token not found in cookies');
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+      const res = await fetch(`/api/schools/my/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(school),
+      });
 
-    Swal.fire({ icon: 'success', title: 'تم تحديث بيانات المدرسة بنجاح' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
 
-  } catch (err) {
-    Swal.fire({ icon: 'error', title: 'خطأ', text: err.message });
+      Swal.fire({ icon: 'success', title: 'تم تحديث بيانات المدرسة بنجاح' });
+
+    } catch (err) {
+      Swal.fire({ icon: 'error', title: 'خطأ', text: err.message });
+    }
   }
-}
 
 
   if (loading) return <div className="text-center mt-10">جاري التحميل...</div>;
   if (!school) return null;
 
   return (
-    <>
+    <div className="container mx-auto p-6 font-[Cairo]">
+      <BrandingBanner user={user} />
       <div className="max-w-3xl mx-auto mt-6 text-right">
         <button
           type="button"
@@ -147,6 +151,6 @@ async function handleSave(e) {
           </button>
         </div>
       </form>
-    </>
+    </div>
   );
 }

@@ -12,7 +12,6 @@ import { Providers } from "@/providers"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { Toaster } from "@/components/ui/toaster"
 import { AssistantChat } from './chat'
-
 // Metadata must be in a separate file if you're using JSX,
 // but keeping it here if you're using this with experimental features.
 export const metadata = {
@@ -44,7 +43,34 @@ export default async function RootLayout(props) {
   const session = await getServerSession(authOptions)
   const direction = i18n.localeDirection[params.lang]
   const user = await getCurrentUser();
-
+  const safeUser = {
+    id: user?._id?.toString?.() || '',
+    avatar: user?.avatar || '',
+    fullName: user?.name || '',
+    email: user?.email || '',
+    role: user?.role || '',
+    wallet: user?.wallet || 0,
+    emailVerified: user?.emailVerified || false,
+    createdAt: user?.createdAt?.toString?.() || '',
+    updatedAt: user?.updatedAt?.toString?.() || '',
+    token: user?.token || '',
+    ownedSchools: (user?.ownedSchools || []).map((school) => ({
+      id: school._id?.toString?.() || '',
+      name: school.name || '',
+      ownership: {
+        owner: {
+          id: school.ownership?.owner?._id?.toString?.() || '',
+          fullName: school.ownership?.owner?.fullName || '',
+          email: school.ownership?.owner?.email || '',
+        },
+        moderators: (school.ownership?.moderators || []).map((mod) => ({
+          id: mod._id?.toString?.() || '',
+          fullName: mod.fullName || '',
+          email: mod.email || '',
+        })),
+      },
+    })),
+  };
   return (
     <html lang={params.lang} dir={direction} suppressHydrationWarning>
       <body
@@ -55,11 +81,11 @@ export default async function RootLayout(props) {
           cairoFont.variable
         )}
       >
-        <Providers locale={params.lang} direction={direction} session={session}>
-          {children}
-          {user && <AssistantChat avatar={user?.avatar ?? ""} token={user?.token ?? ""} />}
-          <Toaster />
-          <Sonner />
+        <Providers locale={params.lang} direction={direction} session={session} user={safeUser}>
+            {children}
+            {user && <AssistantChat avatar={user?.avatar ?? ""} token={user?.token ?? ""} />}
+            <Toaster />
+            <Sonner />
         </Providers>
       </body>
     </html>

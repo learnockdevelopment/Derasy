@@ -11,12 +11,15 @@ import {
   Building2,
 } from 'lucide-react';
 import Swal from 'sweetalert2';
+import SchoolCard from '@/components/school-card';
 import Link from 'next/link';
-
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { useUser } from "@/contexts/user-context"
 export default function MySchoolsPage() {
   const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const user = useUser();
+  console.log('User from context:', user);
   useEffect(() => {
     async function fetchSchools() {
       try {
@@ -47,92 +50,48 @@ export default function MySchoolsPage() {
   }, []);
 
   if (loading) {
-  return (
-    <div className="flex flex-col gap-4 h-64 justify-center items-center w-full max-w-md mx-auto">
-      <div className="w-full h-6 rounded-md bg-gray-200 animate-pulse" />
-      <div className="w-full h-4 rounded-md bg-gray-200 animate-pulse" />
-      <div className="w-3/4 h-4 rounded-md bg-gray-200 animate-pulse" />
-    </div>
-  );
-}
+    return (
+      <div className="flex flex-col gap-4 h-64 justify-center items-center w-full max-w-md mx-auto">
+        <div className="w-full h-6 rounded-md bg-gray-200 animate-pulse" />
+        <div className="w-full h-4 rounded-md bg-gray-200 animate-pulse" />
+        <div className="w-3/4 h-4 rounded-md bg-gray-200 animate-pulse" />
+      </div>
+    );
+  }
 
 
 
   return (
-    <div className="max-w-7xl mx-auto p-6 font-[Cairo]">
-      <h1 className="text-3xl font-bold mb-8 text-center text-purple-700 flex items-center justify-center gap-2">
-        <School className="w-7 h-7" /> المدارس التي أمتلكها
-      </h1>
+    <div className="container mx-auto p-6 font-[Cairo]">
+      {/* 🌟 Branding Slogan Banner */}
+      <div className="bg-gray-200 border-y border-gray-200 py-6 text-center shadow-sm mt-25 mb-8">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
+          نحن منصّة دراسي – نُعلّم، نُرشد، ونفتح أبواب المستقبل.
+        </h2>
+        <p className="text-sm text-gray-600 mt-2">
+          من خلال منصتنا، يمكن للطلاب طلب كارنيهاتهم إلكترونيًا، ويقوم مدير المدرسة بمراجعتها والموافقة عليها بضغطة زر.
+        </p>
+      </div>
+      {user && (<div className="text-center mb-8">
+        <div className="flex items-center justify-start gap-3 mb-4">
+          <Avatar className="w-[100px] h-[100px] rounded-full overflow-hidden border-2 border-purple-700">
+            <AvatarImage src={user?.avatar || ""} alt={user?.fullName || "User"} />
+            <AvatarFallback>{user?.fullName?.charAt(0) || "?"}</AvatarFallback>
+          </Avatar>
+          <div className="text-start">
+            <h1 className="text-2xl font-bold text-purple-700">مرحبًا بعودتك، {user?.fullName} 👋</h1>
+            <p className="text-muted-foreground text-sm">هذه هي المدارس التي تمتلكها.</p>
+          </div>
+        </div>
+      </div>)}
+
 
       {schools.length === 0 ? (
         <p className="text-center text-gray-600 text-lg">لا توجد مدارس مسجلة باسمك.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {schools.map((school) => (
-            <div
-              key={school._id}
-              className="relative rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-blue-600 via-purple-500 to-pink-500 text-white group transition-transform hover:scale-[1.015]"
-            >
-              <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-xl z-0" />
-              <div className="relative z-10 p-5 space-y-4 min-h-[280px] flex flex-col justify-between">
-                <div className="border-b border-white/30 pb-2 text-center">
-                  <Link href={`/pages/admission/me/schools/${school._id}`}>
-  <h2 className="text-xl font-bold flex items-center justify-center gap-2 cursor-pointer hover:underline">
-    <Building2 className="w-6 h-6" /> {school.name}
-  </h2>
-</Link>
-                  <p className="text-sm text-white/80 mt-1">
-                    🏷️ {school.type === 'International' ? 'دولي' : school.type === 'Private' ? 'خاص' : school.type}
-                  </p>
-                </div>
-
-                <ul className="text-sm space-y-3 text-white">
-                  {school.branches?.[0] && (
-                    <li className="flex items-center justify-between border-b border-white/10 pb-1">
-                      <span className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4" /> المنطقة
-                      </span>
-                      <span>{school.branches[0].zone} - {school.branches[0].governorate}</span>
-                    </li>
-                  )}
-
-                  {school.branches?.[0]?.contactPhone && (
-                    <li className="flex items-center justify-between border-b border-white/10 pb-1">
-                      <span className="flex items-center gap-2">
-                        <Phone className="w-4 h-4" /> الهاتف
-                      </span>
-                      <span>{school.branches[0].contactPhone}</span>
-                    </li>
-                  )}
-
-                  {school.website && (
-                    <li className="flex items-center justify-between border-b border-white/10 pb-1">
-                      <span className="flex items-center gap-2">
-                        <Globe className="w-4 h-4" /> الموقع الإلكتروني
-                      </span>
-                      <a
-                        href={school.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white underline flex items-center gap-1"
-                      >
-                        زيارة <ExternalLink className="w-4 h-4" />
-                      </a>
-                    </li>
-                  )}
-
-                  <li className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      💰 الرسوم
-                    </span>
-                    <span>
-                      {school.feesRange?.min?.toLocaleString('ar-EG')} -{' '}
-                      {school.feesRange?.max?.toLocaleString('ar-EG')} EGP
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <SchoolCard school={school} key={school._id} />
           ))}
         </div>
       )}

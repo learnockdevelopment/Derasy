@@ -10,29 +10,29 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
-async function fetchUser() {
-      try {
-        const res = await fetch('/api/me', {
-          headers: {
-            Authorization: `Bearer ${document.cookie
-              .split('; ')
-              .find((row) => row.startsWith('token='))
-              ?.split('=')[1] || ''}`,
-          },
-        });
+  async function fetchUser() {
+    try {
+      const res = await fetch('/api/me', {
+        headers: {
+          Authorization: `Bearer ${document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('token='))
+            ?.split('=')[1] || ''}`,
+        },
+      });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'فشل تحميل البيانات');
-        setUser(data.user);
-      } catch (error) {
-        Swal.fire({ icon: 'error', title: 'خطأ', text: error.message });
-      } finally {
-        setLoading(false);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'فشل تحميل البيانات');
+      setUser(data.user);
+    } catch (error) {
+      Swal.fire({ icon: 'error', title: 'خطأ', text: error.message });
+    } finally {
+      setLoading(false);
     }
+  }
 
   useEffect(() => {
-    
+
     fetchUser();
   }, []);
 
@@ -71,14 +71,14 @@ async function fetchUser() {
   }
 
   if (loading) {
-  return (
-    <div className="flex flex-col gap-4 h-64 justify-center items-center w-full max-w-md mx-auto">
-      <div className="w-full h-6 rounded-md bg-gray-200 animate-pulse" />
-      <div className="w-full h-4 rounded-md bg-gray-200 animate-pulse" />
-      <div className="w-3/4 h-4 rounded-md bg-gray-200 animate-pulse" />
-    </div>
-  );
-}
+    return (
+      <div className="flex flex-col gap-4 h-64 justify-center items-center w-full max-w-md mx-auto">
+        <div className="w-full h-6 rounded-md bg-gray-200 animate-pulse" />
+        <div className="w-full h-4 rounded-md bg-gray-200 animate-pulse" />
+        <div className="w-3/4 h-4 rounded-md bg-gray-200 animate-pulse" />
+      </div>
+    );
+  }
 
 
 
@@ -114,45 +114,45 @@ async function fetchUser() {
   return (
     <div className="max-w-4xl mx-auto p-6 mt-10 font-[Cairo]">
       <div className="bg-muted/40 shadow-2xl rounded-3xl p-10 text-right ">
-       <div className="flex flex-col items-center mb-10 relative">
-  <div
-    className="relative group cursor-pointer"
-    onClick={() => fileInputRef.current?.click()}
-  >
-    {user.avatar ? (
-      <img
-        src={user.avatar}
-        alt="Profile"
-        className="w-28 h-28 object-cover rounded-full shadow-lg border-4 border-purple-200"
-      />
-    ) : (
-      <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 text-white flex items-center justify-center text-5xl font-extrabold shadow-lg">
-        {user.name?.charAt(0).toUpperCase()}
-      </div>
-    )}
+        <div className="flex flex-col items-center mb-10 relative">
+          <div
+            className="relative group cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt="Profile"
+                className="w-28 h-28 object-cover rounded-full shadow-lg border-4 border-purple-200"
+              />
+            ) : (
+              <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 text-white flex items-center justify-center text-5xl font-extrabold shadow-lg">
+                {user.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
 
-    {/* Hover overlay */}
-    <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-      <Camera className="w-6 h-6 text-white" />
-    </div>
-  </div>
+            {/* Hover overlay */}
+            <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <Camera className="w-6 h-6 text-white" />
+            </div>
+          </div>
 
-  <input
-    type="file"
-    accept="image/*"
-    className="hidden"
-    ref={fileInputRef}
-    onChange={handleFileChange}
-  />
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
 
-  {uploading && <p className="text-sm text-purple-500 mt-2">جاري رفع الصورة...</p>}
-  <h2 className="text-2xl font-bold mt-5 text-foreground">{user.name}</h2>
-  <p className="text-sm text-foreground">{user.email}</p>
-</div>
+          {uploading && <p className="text-sm text-purple-500 mt-2">جاري رفع الصورة...</p>}
+          <h2 className="text-2xl font-bold mt-5 text-foreground">{user.name}</h2>
+          <p className="text-sm text-foreground">{user.email}</p>
+        </div>
 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ProfileCard className = "bg-muted/30 "
+          <ProfileCard className="bg-muted/30 "
             icon={<Shield className={`w-5 h-5 ${roleColors[user.role]}`} />}
             label="الدور"
             value={
@@ -162,13 +162,13 @@ async function fetchUser() {
             }
           />
 
-          <ProfileCard className = "bg-muted/30 "
+          <ProfileCard className="bg-muted/30 "
             icon={<CheckCircle className="text-green-500 w-5 h-5" />}
             label="البريد مفعل"
             value={user.emailVerified ? 'نعم' : 'لا'}
           />
 
-          <ProfileCard className = "bg-muted/30 "
+          <ProfileCard className="bg-muted/30 "
             icon={<Calendar className="text-blue-500 w-5 h-5" />}
             label="تاريخ التسجيل"
             value={new Date(user.createdAt).toLocaleDateString('ar-EG')}
@@ -176,7 +176,7 @@ async function fetchUser() {
 
           <Link href="/pages/admission/me/financial" passHref>
             <div className="cursor-pointer hover:scale-[1.02] transition-transform">
-              <ProfileCard className = "bg-muted/30 "
+              <ProfileCard className="bg-muted/30 "
                 icon={<Wallet className="text-yellow-500 w-5 h-5" />}
                 label="رصيد المحفظة"
                 value={

@@ -15,6 +15,11 @@ export const navigationsData: NavigationType[] = [{
         iconName: "ChartBar",
       },
       {
+        title: "schools",
+        href: "/dashboards/schools",
+        iconName: "School",
+      },
+      {
         title: "Cards",
         href: "/dashboards/cards-requests",
         iconName: "IdCard",

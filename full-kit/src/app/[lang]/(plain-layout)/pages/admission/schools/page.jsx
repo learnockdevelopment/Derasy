@@ -43,6 +43,7 @@ export default function SchoolsListPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-gradient-to-tr from-blue-50 via-purple-50 to-pink-50 rounded-xl shadow-xl mt-8 font-[Cairo] text-right">
+      
       <h1 className="text-3xl font-bold mb-6 text-center text-blue-700">🏫 المدارس المتاحة</h1>
 
       {schools.length === 0 ? (

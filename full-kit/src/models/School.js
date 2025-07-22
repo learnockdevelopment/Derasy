@@ -20,7 +20,7 @@ const schoolSchema = new mongoose.Schema({
     publicId: { type: String },
   },
   ownership: {
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     moderators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
   },
 

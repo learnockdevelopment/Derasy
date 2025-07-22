@@ -47,7 +47,7 @@ export async function PUT(req, { params }) {
     const user = await authenticate(req);
     console.log('👤 [3] Authenticated user:', user?.id || 'Not Authenticated');
 
-    if (!user || user.message) {
+    if (!user || user.message && user.role !== 'admin') {
       console.warn('❌ [4] Unauthorized user');
       return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
     }
@@ -76,7 +76,7 @@ export async function PUT(req, { params }) {
     );
     console.log(`🛂 [9] Authorization: isOwner=${isOwner}, isModerator=${isModerator}`);
 
-    if (!isOwner && !isModerator) {
+    if (!isOwner && !isModerator && user.role !== 'admin') {
       console.warn('🚫 [10] User is not authorized to update this school');
       return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
     }
