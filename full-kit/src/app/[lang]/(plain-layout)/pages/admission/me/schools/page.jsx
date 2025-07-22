@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import SchoolCard from '@/components/school-card';
+import BrandingBanner from '../../../../../../../components/branding-banner';
 import Link from 'next/link';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { useUser } from "@/contexts/user-context"
@@ -64,26 +65,7 @@ export default function MySchoolsPage() {
   return (
     <div className="container mx-auto p-6 font-[Cairo]">
       {/* 🌟 Branding Slogan Banner */}
-      <div className="bg-gray-200 border-y border-gray-200 py-6 text-center shadow-sm mt-25 mb-8">
-        <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
-          نحن منصّة دراسي – نُعلّم، نُرشد، ونفتح أبواب المستقبل.
-        </h2>
-        <p className="text-sm text-gray-600 mt-2">
-          من خلال منصتنا، يمكن للطلاب طلب كارنيهاتهم إلكترونيًا، ويقوم مدير المدرسة بمراجعتها والموافقة عليها بضغطة زر.
-        </p>
-      </div>
-      {user && (<div className="text-center mb-8">
-        <div className="flex items-center justify-start gap-3 mb-4">
-          <Avatar className="w-[100px] h-[100px] rounded-full overflow-hidden border-2 border-purple-700">
-            <AvatarImage src={user?.avatar || ""} alt={user?.fullName || "User"} />
-            <AvatarFallback>{user?.fullName?.charAt(0) || "?"}</AvatarFallback>
-          </Avatar>
-          <div className="text-start">
-            <h1 className="text-2xl font-bold text-purple-700">مرحبًا بعودتك، {user?.fullName} 👋</h1>
-            <p className="text-muted-foreground text-sm">هذه هي المدارس التي تمتلكها.</p>
-          </div>
-        </div>
-      </div>)}
+      <BrandingBanner user={user} />
 
 
       {schools.length === 0 ? (
