@@ -6,21 +6,19 @@ import "../globals.css"
 
 import { Providers } from "@/providers"
 
-import type { Metadata } from "next"
-import type { ReactNode } from "react"
 
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { Toaster } from "@/components/ui/toaster"
 
 // Define metadata for the application
 // More info: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
-export const metadata: Metadata = {
+export const metadata = {
   title: {
-    template: "%s | Shadboard",
-    default: "Shadboard",
+    template: "%s | Derasy",
+    default: "Derasy",
   },
   description: "",
-  metadataBase: new URL(process.env.BASE_URL as string),
+  metadataBase: new URL(process.env.BASE_URL),
 }
 
 // Define fonts for the application
@@ -32,7 +30,8 @@ const latoFont = Lato({
   variable: "--font-lato",
 })
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }) {
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body
