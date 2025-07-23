@@ -4,6 +4,7 @@ import '@/models/Child'; // ✅ register the schema
 import '@/models/User';  // ✅ if not already registered
 import '@/models/School'; // ✅ if not already registered
 import '@/models/Application'; // ✅ must import your main model
+import { max } from "date-fns";
 
 
 const schoolSchema = new mongoose.Schema({
@@ -18,6 +19,9 @@ const schoolSchema = new mongoose.Schema({
   idCard: {
     url: { type: String },
     publicId: { type: String },
+    width: { type: Number, default: 600 },
+    height: { type: Number, default: 400 },
+    aspectRatio: { type: String, default: "3:2" }, // e.g. "3:2", "16:9"
   },
   ownership: {
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -48,7 +52,9 @@ const schoolSchema = new mongoose.Schema({
       options: [String], // used if type is "select"
       style: {
         x: { type: Number, default: 0 },
+        xPercentage: { type: Number, default: 0, max: 100 },
         y: { type: Number, default: 0 },
+        yPercentage: { type: Number, default: 0, max: 100 },
         fontSize: { type: Number, default: 14 },
         fontWeight: { type: String, enum: ['normal', 'bold'], default: 'normal' },
         color: { type: String, default: '#000000' },

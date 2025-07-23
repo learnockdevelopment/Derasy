@@ -1,220 +1,207 @@
-'use client';
+"use client"
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Swal from 'sweetalert2';
-import Image from 'next/image';
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+
+import { useUser } from "@/contexts/user-context"
+import CardPreview from "./CardPreview"
+import FormField from "./FormField"
+import SubmitButton from "./SubmitButton"
+import {
+  promptEmail,
+  promptOtp,
+  showError,
+  showLoading,
+  showSuccess,
+  showWarning,
+} from "./alertService"
+import {
+  fetchSchoolData,
+  quickRegister,
+  submitCardRequest,
+  verifyOtp,
+} from "./apiService"
+import { getTokenFromCookie, isUserEmpty, setTokenCookie } from "./authUtils"
 
 export default function StudentCardRequestForm() {
-  const { id } = useParams(); // school ID
-  const [fields, setFields] = useState([]);
-  const [templateImage, setTemplateImage] = useState('');
-  const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { id } = useParams()
+  const [fields, setFields] = useState([])
+  const [idCard, setIdCard] = useState([])
+  const [templateImage, setTemplateImage] = useState("")
+  const [formData, setFormData] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [token, setToken] = useState("")
+  const user = useUser()
 
   useEffect(() => {
-    if (!id) return;
-    async function fetchFields() {
-      try {
-        const res = await fetch(`/api/schools/my/public/${id}`);
-        const data = await res.json();
-        console.log('Fetched fields:', data);
-        if (!res.ok) throw new Error(data.message);
-        setFields(data.school?.studentIdCardFields || []);
-        setTemplateImage(data.school?.idCard.url || '');
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'خطأ', text: err.message });
-      } finally {
-        setLoading(false);
-      }
-    }
+    if (!id) return
+    loadSchoolData()
+  }, [id])
 
-    fetchFields();
-  }, [id]);
+  async function loadSchoolData() {
+    try {
+      const data = await fetchSchoolData(id)
+      setIdCard(data.school?.idCard || [])
+      setFields(data.school?.studentIdCardFields || [])
+      setTemplateImage(data.school?.idCard.url || "")
+    } catch (err) {
+      showError("خطأ", err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   function handleChange(key, value) {
-    setFormData({ ...formData, [key]: value });
+    setFormData((prev) => ({ ...prev, [key]: value }))
   }
 
   async function handleSubmit(e) {
-    e.preventDefault();
+    e.preventDefault()
+    console.log("🟡 Form submission started")
 
-    // تحقق من الحقول المطلوبة
-    for (const field of fields) {
-      if (!formData[field.key]) {
-        Swal.fire({ icon: 'warning', title: 'تنبيه', text: `يرجى تعبئة ${field.key}` });
-        return;
-      }
+    if (isUserEmpty(user)) {
+      console.log("🔴 No user found – calling handleUnregisteredUser()")
+      await handleUnregisteredUser()
+      return
     }
 
+    console.log("✅ User is valid:", user)
+
+    if (!validateForm()) {
+      console.log("🔴 Form validation failed")
+      return
+    }
+    console.log("✅ Form validated successfully")
+
     try {
-      const fd = new FormData();
-      fd.append('schoolId', id);
+      const token = getTokenFromCookie()
+      console.log("🔑 Retrieved token from cookie:", token)
+      setToken(token)
 
-      const fieldsArray = [];
+      showLoading()
+      console.log("⏳ Showing loading indicator")
 
-      for (const field of fields) {
-        const key = field.key;
-        const value = formData[key];
+      await submitCardRequest(id, formData, token)
+      console.log("✅ Card request submitted successfully")
 
-        if (field.type === 'photo' && value instanceof File) {
-          fd.append(`photo_${key}`, value); // نرسل الصورة بهذا المفتاح
-          fieldsArray.push({ key, value: `photo_${key}` }); // نُرسل اسم المفتاح فقط
-        } else {
-          fieldsArray.push({ key, value });
-        }
-      }
-
-      fd.append('fields', JSON.stringify(fieldsArray));
-
-      // ✅ استخراج التوكن من document.cookie
-      const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
-      const token = match ? match[1] : null;
-
-      const res = await fetch(`/api/schools/my/${id}/card/request`, {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        body: fd,
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'فشل الإرسال');
-
-      Swal.fire({ icon: 'success', title: 'تم الإرسال بنجاح', text: 'تم إرسال طلب بطاقة الطالب' });
+      showSuccess("تم الإرسال بنجاح", "تم إرسال طلب بطاقة الطالب.")
+      console.log("🎉 Success message displayed")
     } catch (err) {
-      Swal.fire({ icon: 'error', title: 'خطأ', text: err.message });
+      console.error("❌ Error during card request submission:", err)
+      showError("خطأ", err.message)
     }
   }
 
+  function validateForm() {
+    for (const field of fields) {
+      if (!formData[field.key]) {
+        showWarning("تنبيه", `يرجى تعبئة ${field.key}`)
+        return false
+      }
+    }
+    return true
+  }
 
-  if (loading) return <p className="text-center mt-10">جاري تحميل البيانات...</p>;
+  async function handleUnregisteredUser() {
+    console.log("🟡 Unregistered user flow started")
+
+    const result = await promptEmail()
+    console.log("📨 Email prompt result:", result)
+
+    if (!result.isConfirmed) {
+      console.log("❌ User cancelled email prompt")
+      return
+    }
+
+    try {
+      console.log("⏳ Showing loading: sending verification code...")
+      showLoading("جاري الإرسال", "جاري إرسال رمز التحقق...")
+
+      console.log("📤 Sending quick register request for:", result.value)
+      await quickRegister(result.value)
+      console.log("✅ Quick register request sent")
+
+      showSuccess("تم الإرسال", "تم إرسال الطلب بنجاح.")
+      console.log("🎉 Success message displayed for quick register")
+
+      console.log("🔐 Verifying OTP with retry for:", result.value)
+      await verifyOtpWithRetry(result.value)
+      console.log("✅ OTP verified successfully")
+
+      console.log("📨 Submitting card request after registration")
+      await submitCardRequest(id, formData, token)
+      console.log("✅ Card request submitted successfully (after registration)")
+
+      console.log("🔄 Reloading the page")
+      window.location.reload()
+    } catch (err) {
+      console.error("❌ Error in unregistered user flow:", err)
+      showError("خطأ", err.message)
+    }
+  }
+
+  async function verifyOtpWithRetry(email) {
+    let attempts = 0
+    const maxAttempts = 3
+
+    while (attempts < maxAttempts) {
+      attempts++
+      const { value: otp, isDismissed } = await promptOtp(
+        email,
+        attempts,
+        maxAttempts
+      )
+      if (isDismissed) return false
+
+      try {
+        showLoading("جاري التحقق", "جاري التحقق من رمز التحقق...")
+        const data = await verifyOtp(email, otp)
+        setTokenCookie(data.token)
+        setToken(data.token)
+        if (data.correct) {
+          await submitCardRequest(id, formData, token)
+        }
+        await showSuccess("تم التحقق بنجاح", data.message, 2000)
+        return true
+      } catch (err) {
+        if (attempts >= maxAttempts) {
+          showError("فشل التحقق", "لقد تجاوزت الحد الأقصى لمحاولات التحقق.")
+          return false
+        }
+      }
+    }
+    return false
+  }
+
+  if (loading)
+    return <p className="text-center mt-10">جاري تحميل البيانات...</p>
 
   return (
-    <div className="max-w-5xl mx-auto p-4 grid md:grid-cols-2 gap-8">
-      {/* ✅ النموذج */}
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow font-[Cairo] border">
-        <h2 className="text-xl font-bold text-purple-700 mb-4 text-center">طلب بطاقة طالب</h2>
+    <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-8 font-[Cairo]">
+      <CardPreview
+        idCard={idCard}
+        templateImage={templateImage}
+        fields={fields}
+        formData={formData}
+      />
 
-        {fields.map((field, index) => (
-          <div key={index} className="mb-4">
-            <label className="block mb-1 font-semibold">{field.key}</label>
-            {field.type === 'text' && (
-              <input
-                type="text"
-                value={formData[field.key] || ''}
-                onChange={(e) => handleChange(field.key, e.target.value)}
-                className="w-full border rounded p-2"
-              />
-            )}
-            {field.type === 'number' && (
-              <input
-                type="number"
-                value={formData[field.key] || ''}
-                onChange={(e) => handleChange(field.key, e.target.value)}
-                className="w-full border rounded p-2"
-              />
-            )}
-            {field.type === 'date' && (
-              <input
-                type="date"
-                value={formData[field.key] || ''}
-                onChange={(e) => handleChange(field.key, e.target.value)}
-                className="w-full border rounded p-2"
-              />
-            )}
-            {field.type === 'photo' && (
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleChange(field.key, e.target.files[0])}
-                className="w-full border rounded p-2"
-              />
-            )}
-            {field.type === 'select' && (
-              <select
-                value={formData[field.key] || ''}
-                onChange={(e) => handleChange(field.key, e.target.value)}
-                className="w-full border rounded p-2"
-              >
-                <option value="">اختر</option>
-                {field.options?.map((opt, i) => (
-                  <option key={i} value={opt}>{opt}</option>
-                ))}
-              </select>
-            )}
-          </div>
-        ))}
-
-        <div className="text-center mt-6">
-          <button type="submit" className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700">
-            إرسال الطلب
-          </button>
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 transition-all hover:shadow-xl">
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white">
+          <h2 className="text-xl font-bold text-center">طلب بطاقة طالب</h2>
         </div>
-      </form>
 
-      {/* ✅ معاينة البطاقة */}
-      <div className="bg-gray-100 p-4 rounded shadow">
-        <h2 className="text-lg font-semibold mb-4 text-center">معاينة البطاقة</h2>
-
-        <div className="relative w-full h-[300px] border rounded overflow-hidden">
-          {templateImage ? (
-            <Image
-              src={templateImage}
-              alt="بطاقة الطالب"
-              layout="fill"
-              objectFit="cover"
-              className="z-0"
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {fields.map((field, index) => (
+            <FormField
+              key={index}
+              field={field}
+              value={formData[field.key]}
+              onChange={handleChange}
             />
-          ) : (
-            <div className="absolute inset-0 bg-gray-200 flex items-center justify-center text-gray-500">
-              لا يوجد قالب للبطاقة
-            </div>
-          )}
-
-          {/* البيانات تظهر فوق البطاقة */}
-          {fields.map((field, i) => {
-            const style = field.style || {};
-            const value = formData[field.key];
-
-            const commonStyle = {
-              position: 'absolute',
-              left: `${style.x || 0}px`,
-              top: `${style.y || 0}px`,
-              width: `${style.width || 100}px`,
-              height: `${style.height || 30}px`,
-              fontSize: `${style.fontSize || 14}px`,
-              fontWeight: style.fontWeight || 'normal',
-              color: style.color || '#000',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              textAlign: style.textAlign || 'center',
-              backgroundColor: "transparent",
-              padding: '2px',
-              borderRadius: '4px',
-              zIndex: 10
-            };
-
-            if (field.type === 'photo' && value instanceof File) {
-              const previewURL = URL.createObjectURL(value);
-              return (
-                <img
-                  key={i}
-                  src={previewURL}
-                  alt={field.key}
-                  style={{ ...commonStyle, objectFit: 'cover', border: '1px solid #ccc' }}
-                />
-              );
-            }
-
-            return (
-              <div key={i} style={commonStyle}>
-                {value || '---'}
-              </div>
-            );
-          })}
-        </div>
+          ))}
+          <SubmitButton />
+        </form>
       </div>
     </div>
-  );
+  )
 }

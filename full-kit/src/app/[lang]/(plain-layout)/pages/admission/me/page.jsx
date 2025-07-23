@@ -119,6 +119,7 @@ export default function ProfilePage() {
             className="relative group cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
+            
             {user.avatar ? (
               <img
                 src={user.avatar}

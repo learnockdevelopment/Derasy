@@ -1,82 +1,107 @@
-import { dbConnect } from '@/lib/dbConnect';
-import School from '@/models/School';
-import { authenticate } from '@/middlewares/auth';
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server"
+import { authenticate } from "@/middlewares/auth"
+import School from "@/models/School"
+
+import { dbConnect } from "@/lib/dbConnect"
 
 // GET single school
 export async function GET(req, { params }) {
   try {
-    await dbConnect();
-    const user = await authenticate(req);
+    await dbConnect()
+    const user = await authenticate(req)
     if (!user || user.message) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 })
     }
 
-    const { id } = params;
+    const { id } = params
     if (!id || id.length !== 24) {
-      return NextResponse.json({ message: 'Invalid school ID' }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid school ID" },
+        { status: 400 }
+      )
     }
 
     const school = await School.findById(id)
-      .populate('ownership.owner', 'fullName email')
-      .populate('ownership.moderators', 'fullName email')
-      .lean();
+      .populate("ownership.owner", "fullName email")
+      .populate("ownership.moderators", "fullName email")
+      .lean()
 
     if (!school) {
-      return NextResponse.json({ message: 'School not found' }, { status: 404 });
+      return NextResponse.json({ message: "School not found" }, { status: 404 })
     }
 
-    return NextResponse.json({ school });
+    return NextResponse.json({ school })
   } catch (error) {
     return NextResponse.json(
-      { message: 'Internal Server Error', error: error.message },
+      { message: "Internal Server Error", error: error.message },
       { status: 500 }
-    );
+    )
   }
 }
 
 // PUT to update idCardFields
 export async function PUT(req, { params }) {
   try {
-    await dbConnect();
-    const user = await authenticate(req);
+    await dbConnect()
+    const user = await authenticate(req)
     if (!user || user.message) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 })
     }
 
-    const { id } = params;
+    const { id } = params
     if (!id || id.length !== 24) {
-      return NextResponse.json({ message: 'Invalid school ID' }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid school ID" },
+        { status: 400 }
+      )
     }
 
-    const body = await req.json();
-    const { studentIdCardFields } = body;
-    const idCardFields = studentIdCardFields || [];
-console.log(body)
+    const body = await req.json()
+    const { studentIdCardFields } = body
+    const idCardFields = studentIdCardFields || []
+
     if (!Array.isArray(idCardFields)) {
-      return NextResponse.json({ message: 'idCardFields must be an array' }, { status: 400 });
+      return NextResponse.json(
+        { message: "idCardFields must be an array" },
+        { status: 400 }
+      )
     }
 
-    const school = await School.findById(id);
+    const school = await School.findById(id)
     if (!school) {
-      return NextResponse.json({ message: 'School not found' }, { status: 404 });
+      return NextResponse.json({ message: "School not found" }, { status: 404 })
     }
 
-    // Optional: Only allow owner/moderator to update
-    const isOwner = school.ownership.owner?.toString() === user.id;
-    const isModerator = school.ownership.moderators?.some(
-      (mod) => mod.toString() === user.id
-    );
-    school.studentIdCardFields = idCardFields;
-    await school.save();
+    // Get current card dimensions (fallback if undefined)
+    const cardWidth = school.idCard?.width || 600
+    const cardHeight = school.idCard?.height || 400
 
-    return NextResponse.json({ message: 'Fields updated successfully', school });
+    // Inject percentage values into each style object
+    const updatedFields = idCardFields.map((field) => {
+      const style = field.style || {}
+      const x = style.x || 0
+      const y = style.y || 0
 
+      return {
+        ...field,
+        style: {
+          ...style,
+          xPercentage: parseFloat(((x / cardWidth) * 100).toFixed(2)),
+          yPercentage: parseFloat(((y / cardHeight) * 100).toFixed(2)),
+        },
+      }
+    })
+
+    // Save updated fields
+    school.studentIdCardFields = updatedFields
+    await school.save()
+
+    return NextResponse.json({ message: "Fields updated successfully", school })
   } catch (error) {
-    console.log('Error updating school:', error);
+    console.error("Error updating school:", error)
     return NextResponse.json(
-      { message: 'Internal Server Error', error: error },
+      { message: "Internal Server Error", error: error.message },
       { status: 500 }
-    );
+    )
   }
 }

@@ -30,7 +30,8 @@ export async function GET(req) {
     const requests = await StudentIdCardRequest.find({
       school: { $in: schoolIds },
     })
-      .populate('school', 'name idCard studentIdCardFields')
+      .populate('school')
+      .populate('student')
       .lean();
 
     return NextResponse.json({

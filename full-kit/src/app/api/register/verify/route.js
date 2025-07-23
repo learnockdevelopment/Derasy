@@ -1,41 +1,52 @@
-import { dbConnect } from '@/lib/dbConnect';
-import User from '@/models/User';
-import nodemailer from 'nodemailer';
+import { stat } from "fs"
+
+import User from "@/models/User"
+import jwt from "jsonwebtoken"
+import nodemailer from "nodemailer"
+
+import { dbConnect } from "@/lib/dbConnect"
 
 export async function POST(req) {
-  await dbConnect();
+  await dbConnect()
 
-  const { email, otp } = await req.json();
+  const { email, otp } = await req.json()
 
   if (!email || !otp) {
-    return Response.json({ message: 'Email and OTP are required' }, { status: 400 });
+    return Response.json(
+      { message: "Email and OTP are required" },
+      { status: 400 }
+    )
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email })
   if (!user) {
-    return Response.json({ message: 'User not found' }, { status: 404 });
-  }
-
-  if (user.emailVerified) {
-    return Response.json({ message: 'Email already verified' }, { status: 200 });
+    return Response.json({ message: "User not found" }, { status: 404 })
   }
 
   if (!user.otp?.code || !user.otp?.expiresAt) {
-    return Response.json({ message: 'No OTP found for this user' }, { status: 400 });
+    return Response.json(
+      { message: "No OTP found for this user" },
+      { status: 400 }
+    )
   }
 
   if (user.otp.code !== otp) {
-    return Response.json({ message: 'Invalid OTP' }, { status: 400 });
+    return Response.json({ message: "Invalid OTP" }, { status: 400 })
   }
 
   if (new Date(user.otp.expiresAt) < new Date()) {
-    return Response.json({ message: 'OTP expired' }, { status: 400 });
+    return Response.json({ message: "OTP expired" }, { status: 400 })
   }
 
-  // ✅ Mark email verified & clear OTP
-  user.emailVerified = true;
-  user.otp = undefined;
-  await user.save();
+  // ✅ Mark email verified
+  user.emailVerified = true
+  user.otp = undefined
+
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  )
 
   // ✅ Send a confirmation email
   const transporter = nodemailer.createTransport({
@@ -44,9 +55,9 @@ export async function POST(req) {
     secure: true,
     auth: {
       user: process.env.MAIL_USERNAME,
-      pass: process.env.MAIL_PASSWORD
-    }
-  });
+      pass: process.env.MAIL_PASSWORD,
+    },
+  })
 
   const confirmationHTML = `
     <div style="background: #f8f9fa; padding: 40px 20px; font-family: 'Cairo', sans-serif; max-width: 600px; margin: auto; border-radius: 12px; border: 1px solid #ddd;">
@@ -69,14 +80,18 @@ export async function POST(req) {
         © ${new Date().getFullYear()} منصة دراسي. جميع الحقوق محفوظة.
       </p>
     </div>
-  `;
+  `
 
   await transporter.sendMail({
     from: process.env.MAIL_FROM_ADDRESS,
     to: user.email,
-    subject: '🎉 تم تأكيد بريدك الإلكتروني بنجاح',
-    html: confirmationHTML
-  });
+    subject: "🎉 تم تأكيد بريدك الإلكتروني بنجاح",
+    html: confirmationHTML,
+  })
 
-  return Response.json({ message: 'Email verified successfully and confirmation sent' });
+  return Response.json({
+    message: "Email verified successfully",
+    token,
+    correct: true,
+  })
 }

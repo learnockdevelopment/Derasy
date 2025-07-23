@@ -9,7 +9,7 @@ import School from '@/models/School';
 export async function POST(req, { params }) {
   try {
     console.log('📨 Incoming POST request to /api/schools/my/:id/card-request');
-
+console.log(req)
     await dbConnect();
     const user = await authenticate(req);
     if (!user || user.message) {

@@ -1,56 +1,56 @@
-'use client';
+"use client"
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Swal from 'sweetalert2';
-import Image from 'next/image';
-import Link from 'next/link';
+import { useEffect, useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { useParams } from "next/navigation"
+import Swal from "sweetalert2"
 
 export default function StudentCardRequestsPage() {
-  const { id } = useParams(); // School ID
-  const [requests, setRequests] = useState([]);
-  const [templateImage, setTemplateImage] = useState('');
-  const [fieldsConfig, setFieldsConfig] = useState([]);
-  const [summary, setSummary] = useState(null); // 🟢 تحليل البيانات
-  const [loading, setLoading] = useState(true);
+  const { id } = useParams() // School ID
+  const [requests, setRequests] = useState([])
+  const [templateImage, setTemplateImage] = useState("")
+  const [fieldsConfig, setFieldsConfig] = useState([])
+  const [summary, setSummary] = useState(null) // 🟢 تحليل البيانات
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) return
 
     async function fetchData() {
       try {
-        const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
-        const token = match ? match[1] : null;
+        const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/)
+        const token = match ? match[1] : null
 
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const headers = token ? { Authorization: `Bearer ${token}` } : {}
 
         // 🟢 الطلب الرئيسي للطلبات
         const [reqRes, summaryRes] = await Promise.all([
           fetch(`/api/schools/my/${id}/card/request`, { headers }),
           fetch(`/api/schools/my/${id}/card/request/summary`, { headers }),
-        ]);
+        ])
 
-        const reqData = await reqRes.json();
-        const summaryData = await summaryRes.json();
+        const reqData = await reqRes.json()
+        const summaryData = await summaryRes.json()
 
-        if (!reqRes.ok) throw new Error(reqData.message);
-        if (!summaryRes.ok) throw new Error(summaryData.message);
+        if (!reqRes.ok) throw new Error(reqData.message)
+        if (!summaryRes.ok) throw new Error(summaryData.message)
 
-        setRequests(reqData.requests || []);
-        setFieldsConfig(reqData.fields || []);
-        setTemplateImage(reqData?.school?.idCard?.url || '');
-        setSummary(summaryData.summary); // 🟢 حفظ التحليل
+        setRequests(reqData.requests || [])
+        setFieldsConfig(reqData.fields || [])
+        setTemplateImage(reqData?.school?.idCard?.url || "")
+        setSummary(summaryData.summary) // 🟢 حفظ التحليل
       } catch (err) {
-        Swal.fire({ icon: 'error', title: 'خطأ', text: err.message });
+        Swal.fire({ icon: "error", title: "خطأ", text: err.message })
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    fetchData();
-  }, [id]);
+    fetchData()
+  }, [id])
 
-  if (loading) return <p className="text-center mt-10">جاري تحميل الطلبات...</p>;
+  if (loading) return <p className="text-center mt-10">جاري تحميل الطلبات...</p>
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
@@ -65,7 +65,7 @@ export default function StudentCardRequestsPage() {
             <p className="text-sm text-gray-600">الحالة</p>
             {summary.statusStats.map((s, i) => (
               <div key={i} className="text-sm text-gray-700">
-                {s._id || 'غير محدد'}: {s.count}
+                {s._id || "غير محدد"}: {s.count}
               </div>
             ))}
           </div>
@@ -108,45 +108,54 @@ export default function StudentCardRequestsPage() {
                   )}
 
                   {req.school.studentIdCardFields.map((field, i) => {
-                    const style = field.style || {};
-                    const submittedValue = req.fields?.find(f => f.key === field.key)?.value;
+                    const style = field.style || {}
+                    const submittedValue = req.fields?.find(
+                      (f) => f.key === field.key
+                    )?.value
 
                     const commonStyle = {
-                      position: 'absolute',
+                      position: "absolute",
                       left: `${style.x || 0}px`,
                       top: `${style.y || 0}px`,
                       width: `${style.width || 100}px`,
                       height: `${style.height || 30}px`,
                       fontSize: `${style.fontSize || 14}px`,
-                      fontWeight: style.fontWeight || 'normal',
-                      color: style.color || '#000',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                      textAlign: style.textAlign || 'center',
-                      backgroundColor: 'transparent',
-                      padding: '2px',
-                      borderRadius: '4px',
+                      fontWeight: style.fontWeight || "normal",
+                      color: style.color || "#000",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                      textAlign: style.textAlign || "center",
+                      backgroundColor: "transparent",
+                      padding: "2px",
+                      borderRadius: "4px",
                       zIndex: 10,
-                      pointerEvents: 'none',
-                    };
+                      pointerEvents: "none",
+                    }
 
-                    if (field.type === 'photo' && submittedValue?.startsWith('http')) {
+                    if (
+                      field.type === "photo" &&
+                      submittedValue?.startsWith("http")
+                    ) {
                       return (
                         <img
                           key={i}
                           src={submittedValue}
                           alt={field.key}
-                          style={{ ...commonStyle, objectFit: 'cover', border: '1px solid #ccc' }}
+                          style={{
+                            ...commonStyle,
+                            objectFit: "cover",
+                            border: "1px solid #ccc",
+                          }}
                         />
-                      );
+                      )
                     }
 
                     return (
                       <div key={i} style={commonStyle}>
-                        {submittedValue || '---'}
+                        {submittedValue || "---"}
                       </div>
-                    );
+                    )
                   })}
                 </div>
 
@@ -154,18 +163,18 @@ export default function StudentCardRequestsPage() {
                   <span
                     className={`inline-block px-3 py-1 rounded-full text-xs font-semibold 
                       ${
-                        req.status === 'approved'
-                          ? 'bg-green-100 text-green-700'
-                          : req.status === 'rejected'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-gray-100 text-gray-700'
+                        req.status === "approved"
+                          ? "bg-green-100 text-green-700"
+                          : req.status === "rejected"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-gray-100 text-gray-700"
                       }`}
                   >
-                    {req.status === 'approved'
-                      ? 'تم القبول'
-                      : req.status === 'rejected'
-                      ? 'مرفوض'
-                      : 'قيد المراجعة'}
+                    {req.status === "approved"
+                      ? "تم القبول"
+                      : req.status === "rejected"
+                        ? "مرفوض"
+                        : "قيد المراجعة"}
                   </span>
                 </div>
               </div>
@@ -174,5 +183,5 @@ export default function StudentCardRequestsPage() {
         </div>
       )}
     </div>
-  );
+  )
 }
