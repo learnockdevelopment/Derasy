@@ -149,7 +149,8 @@ export default function EditSchoolCardFieldsPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="flex flex-col-reverse gap-5">
+
           {/* Left: Editor */}
           <div>
             {studentIdCardFields.map((field, index) => (
