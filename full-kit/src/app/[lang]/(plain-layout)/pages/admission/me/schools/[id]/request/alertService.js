@@ -1,4 +1,5 @@
 import Swal from "sweetalert2"
+import { OAuthButtons } from "../../../../../../../../../components/auth/oauth2"
 
 export const showLoading = (
   title = "جاري الإرسال",

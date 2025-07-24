@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-
+import { OAuthButtons } from "./oauth2"
 import type { DictionaryType } from "@/lib/get-dictionary"
 import type { LocaleType } from "@/types"
 import type { ComponentProps } from "react"
@@ -51,12 +51,15 @@ export function Auth({
             width={24}
             className="dark:invert"
           /> */}
+          
           <span>Derasy</span>
           </Link>
           <LanguageDropdown dictionary={dictionary} />
         </div>
         <div className="max-w-[28rem] w-full m-auto px-6 py-12 space-y-6">
+          
           {children}
+          <OAuthButtons callbackUrl={null}/>
         </div>
       </div>
       {imgSrc && <AuthImage imgSrc={imgSrc} className={cn("", imgClassName)} />}

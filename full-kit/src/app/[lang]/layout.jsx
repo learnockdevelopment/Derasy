@@ -2,12 +2,13 @@ import { Cairo, Lato } from "next/font/google"
 import { getServerSession } from "next-auth"
 
 import { i18n } from "@/configs/i18n"
-import { authOptions } from "@/configs/next-auth"
+import { authConfig } from "@/auth"
 import { cn } from "@/lib/utils"
 
 import "../globals.css"
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import { Providers } from "@/providers"
+import Script from 'next/script'
 
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { Toaster } from "@/components/ui/toaster"
@@ -40,7 +41,8 @@ export default async function RootLayout(props) {
   const params = await props.params
   const { children } = props
 
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authConfig)
+  console.log("Session:", session)
   const direction = i18n.localeDirection[params.lang]
   const user = await getCurrentUser();
   const safeUser = {
@@ -81,6 +83,10 @@ export default async function RootLayout(props) {
           cairoFont.variable
         )}
       >
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="beforeInteractive"
+        />
         <main className="flex min-h-screen flex-col pt-16">
           <Providers locale={params.lang} direction={direction} session={session} user={safeUser}>
             {children}
@@ -89,6 +95,9 @@ export default async function RootLayout(props) {
             <Sonner />
           </Providers>
         </main>
+
+
+        
       </body>
     </html>
   )

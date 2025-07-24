@@ -14,6 +14,7 @@ export default async function DashboardLayout({ children, params }) {
     email: user?.email || '',
     role: user?.role || '',
     wallet: user?.wallet || 0,
+    avatar: user?.avatar || '',
     emailVerified: user?.emailVerified || false,
     createdAt: user?.createdAt?.toString?.() || '',
     updatedAt: user?.updatedAt?.toString?.() || '',

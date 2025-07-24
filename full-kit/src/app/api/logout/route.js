@@ -11,6 +11,15 @@ export async function POST() {
     sameSite: 'lax',
     maxAge: 0, // expires immediately
   });
+cookies().set({
+    name: 'accessToken',
+    value: '',
+    path: '/',
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    maxAge: 0, // expires immediately
+  });
 
   return Response.json({ message: 'Logged out successfully' });
 }
