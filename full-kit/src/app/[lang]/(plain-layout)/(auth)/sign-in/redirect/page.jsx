@@ -71,9 +71,6 @@ export default function RedirectPage() {
         <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: '0.6s' }}></div>
       </div>
 
-      {/* Loading spinner */}
-      <Loader2 className="w-10 h-10 mb-6 text-blue-500 animate-spin" />
-
       {/* Message with percentage */}
       <p className="text-gray-600 mb-2 text-lg">جاري تسجيل الدخول... {progress}%</p>
 

@@ -8,7 +8,7 @@ import { authConfig } from '@/auth' // Your NextAuth config file
 
 export async function getCurrentUser() {
   await dbConnect()
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const session = await getServerSession(authConfig)
   const jwtToken = cookieStore.get('token')?.value
   const accessToken = cookieStore.get('accessToken')?.value

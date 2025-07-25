@@ -132,27 +132,6 @@ export function UserDropdown({
 
         <DropdownMenuSeparator />
 
-        {/* Profile + Settings */}
-        <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link
-              href={ensureLocalizedPathname(user?.role === 'admin' ? "/pages/account/profile" : "/pages/admission/me", locale)}
-            >
-              <User className="me-2 size-4" />
-              {dictionary.navigation.userNav.profile}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              href={ensureLocalizedPathname("/pages/account/settings", locale)}
-            >
-              <UserCog className="me-2 size-4" />
-              {dictionary.navigation.userNav.settings}
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
 
         {/* Logout */}
         <DropdownMenuItem>

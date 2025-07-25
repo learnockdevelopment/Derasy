@@ -59,7 +59,7 @@ export function Auth({
         <div className="max-w-[28rem] w-full m-auto px-6 py-12 space-y-6">
           
           {children}
-          <OAuthButtons callbackUrl={null}/>
+          <OAuthButtons callbackUrl={'/sign-in'}/>
         </div>
       </div>
       {imgSrc && <AuthImage imgSrc={imgSrc} className={cn("", imgClassName)} />}
