@@ -29,17 +29,6 @@ export async function getCurrentUser() {
       if (session?.user?.id) {
         user = await User.findOne({ email: session.user.id }).lean()
 
-        // 👇 Optionally create user if not found
-        if (!user) {
-          user = await User.create({
-            name: session.user.name,
-            email: session.user.email,
-            avatar: session.user.image,
-            role: 'parent',
-            emailVerified: true,
-          })
-          user = user.toObject()
-        }
       }
     }
 
