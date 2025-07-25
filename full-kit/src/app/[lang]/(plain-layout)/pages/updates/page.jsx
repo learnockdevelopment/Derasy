@@ -4,37 +4,47 @@ import { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, GitCommit, Github, Loader2 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Progress } from "@/components/ui/progress";
 
 export default function UpdateStatus() {
   const [commits, setCommits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState('جاري التهيئة...');
 
   useEffect(() => {
     const fetchLatestCommits = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
-          "/api/github-commits", // استخدم مسار API بدلاً من الاتصال المباشر
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          }
-        );
+        setProgress(10);
+        setStatus('جاري الاتصال بالخادم...');
 
+        const res = await fetch("/api/github-commits");
+        setProgress(30);
+        
         if (!res.ok) {
           throw new Error('حدث خطأ أثناء جلب التحديثات');
         }
 
+        setStatus('جاري معالجة البيانات...');
+        setProgress(60);
+        
         const data = await res.json();
-        console.log("Fetching commits from API...", data);
-        setCommits(data);
+        setProgress(80);
+        setStatus('جاري عرض النتائج...');
+
+        setTimeout(() => {
+          setCommits(data);
+          setProgress(100);
+          setStatus('تم التحميل بنجاح');
+          setTimeout(() => setLoading(false), 500);
+        }, 300);
+
       } catch (err) {
         setError(err.message);
-      } finally {
-        setLoading(false);
+        setStatus('حدث خطأ');
+        setProgress(0);
       }
     };
 
@@ -76,12 +86,7 @@ export default function UpdateStatus() {
           <GitCommit className="h-5 w-5" />
         </h2>
 
-        {loading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <span className="mr-2">جاري التحميل...</span>
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="text-center py-8 text-destructive">
             {error}
             <Button 
@@ -92,23 +97,32 @@ export default function UpdateStatus() {
               إعادة المحاولة
             </Button>
           </div>
+        ) : loading ? (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">{status}</span>
+              <span className="text-sm font-medium">{progress}%</span>
+            </div>
+            <Progress value={progress} className="h-2" />
+            <div className="flex justify-center py-4">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          </div>
         ) : (
           <div className="space-y-3">
-            {commits.updates.length > 0 ? (
+            {commits.updates?.length > 0 ? (
               commits.updates.map((commit) => (
                 <div
-                  key={commit?.sha}
+                  key={commit.id}
                   className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow text-right"
                 >
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1 justify-end">
-                    <span>
-                      {commit?.date}
-                    </span>
+                    <span>{commit.date}</span>
                     <CalendarDays className="h-4 w-4" />
                   </div>
-                  <p className="font-medium">{commit?.translatedMessage?.split('\n')[0]}</p>
+                  <p className="font-medium">{commit.translatedMessage}</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    بواسطة {commit?.author}
+                    بواسطة {commit.author}
                   </p>
                 </div>
               ))
@@ -131,5 +145,5 @@ export default function UpdateStatus() {
         </Button>
       </div>
     </div>
-  )
+  );
 }
