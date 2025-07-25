@@ -47,7 +47,7 @@ export default async function DashboardLayout({ children, params }) {
 
 
 
-        <main className="p-6 flex-1 overflow-y-auto container mx-auto">
+        <main className="p-6 flex-1 overflow-y-auto container mx-auto mt-15">
           <Breadcrumbs />
           {children}
           </main>
