@@ -17,7 +17,7 @@ export default function UpdateStatus() {
     const fetchLatestCommits = async () => {
       try {
         setLoading(true);
-        setProgress(10);
+        setProgress(35);
         setStatus('جاري الاتصال بالخادم...');
 
         const res = await fetch("/api/github-commits");
@@ -71,7 +71,7 @@ export default function UpdateStatus() {
             نحن نعمل باستمرار على تحسين التطبيق. إليك أحدث التغييرات:
           </p>
 
-          <div className="flex items-center gap-2 justify-end">
+          <div className="flex items-center gap-2 justify-start">
             <span className="text-sm font-medium">
               مستودع التطوير
             </span>
@@ -81,9 +81,10 @@ export default function UpdateStatus() {
       </div>
 
       <div className="w-full max-w-2xl space-y-4">
-        <h2 className="text-xl font-semibold flex items-center gap-2 justify-end">
-          آخر التغييرات
+        <h2 className="text-xl font-semibold flex items-center gap-2 justify-start">
           <GitCommit className="h-5 w-5" />
+          آخر التغييرات
+          
         </h2>
 
         {error ? (
@@ -116,9 +117,9 @@ export default function UpdateStatus() {
                   key={commit.id}
                   className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow text-right"
                 >
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1 justify-end">
-                    <span>{commit.date}</span>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1 justify-start">
                     <CalendarDays className="h-4 w-4" />
+                    <span>{commit.date}</span>
                   </div>
                   <p className="font-medium">{commit.translatedMessage}</p>
                   <p className="text-sm text-muted-foreground mt-1">
