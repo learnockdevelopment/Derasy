@@ -5,32 +5,26 @@ const nextConfig = {
   // Configure `pageExtensions` to include markdown and MDX files
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   experimental: {
-    turbo: false,
+    // Removed or properly configured turbo
   },
   images: {
     domains: ['ik.imagekit.io'],
   },
-  // See https://lucide.dev/guide/packages/lucide-react#nextjs-example
   transpilePackages: ["lucide-react"],
   eslint: {
-    ignoreDuringBuilds: true, // ✅ disables ESLint during builds
+    ignoreDuringBuilds: true,
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        canvas: false, // prevent canvas from being bundled client-side
+        canvas: false,
       };
     }
     return config;
   },
-  // See https://nextjs.org/docs/app/building-your-application/routing/redirecting#redirects-in-nextconfigjs
   async redirects() {
     return [
-      // ⚠️ Important:
-      // Always list more specific static paths before dynamic ones like "/:lang"
-      // to prevent Next.js from incorrectly matching static routes as dynamic parameters.
-      // For example, if "/:lang" comes before "/docs", Next.js may treat "docs" as a language.
       {
         source: "/docs",
         destination: "/docs/overview/introduction",
@@ -38,7 +32,7 @@ const nextConfig = {
       },
       {
         source: "/:lang",
-        destination: process.env.HOME_PATHNAME,
+        destination: process.env.HOME_PATHNAME || "/:lang", // Fallback added
         permanent: true,
         has: [
           {
@@ -49,7 +43,7 @@ const nextConfig = {
       },
       {
         source: "/:lang",
-        destination: process.env.HOME_PATHNAME,
+        destination: process.env.HOME_PATHNAME || "/:lang", // Fallback added
         permanent: true,
         has: [
           {
@@ -67,9 +61,5 @@ const nextConfig = {
   },
 }
 
-const withMDX = createMDX({
-  // Add markdown plugins here, as desired
-})
-
-// Merge MDX config with Next.js config
+const withMDX = createMDX()
 export default withMDX(nextConfig)
