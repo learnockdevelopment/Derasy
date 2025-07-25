@@ -155,7 +155,11 @@ export default function StudentCardRequestForm() {
                 <p className="text-sm mt-2">سيتم حفظ بيانات الطلب بعد تسجيل الدخول</p>
               </div>
 
-              <div className="relative py-4">
+              
+              
+              <div className="grid grid-cols-1 gap-4">
+                <OAuthButtons callbackUrl={`/pages/admission/me/schools/${id}/request`} />
+                <div className="relative py-4">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
@@ -163,9 +167,6 @@ export default function StudentCardRequestForm() {
                   <span className="bg-white px-4 text-gray-500">أو</span>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-1 gap-4">
-                <OAuthButtons callbackUrl={`/pages/admission/me/schools/${id}/request`} />
                 <button
                   type="button"
                   onClick={handleEmailAuth}
