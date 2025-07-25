@@ -7,10 +7,12 @@ import { OAuthButtons } from "./oauth2"
 import type { DictionaryType } from "@/lib/get-dictionary"
 import type { LocaleType } from "@/types"
 import type { ComponentProps } from "react"
+import { RocketIcon } from "lucide-react"
 
 import { ensureLocalizedPathname } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
-
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import { LanguageDropdown } from "../language-dropdown"
 
 interface AuthProps extends ComponentProps<"div"> {
@@ -44,24 +46,43 @@ export function Auth({
             href={ensureLocalizedPathname("/", locale)}
             className="flex text-foreground font-black z-50"
           >
-            {/* <Image
-            src="/images/icons/shadboard.svg"
-            alt=""
-            height={24}
-            width={24}
-            className="dark:invert"
-          /> */}
-          
-          <span>Derasy</span>
+            <span>Derasy</span>
           </Link>
           <LanguageDropdown dictionary={dictionary} />
         </div>
-        <div className="max-w-[28rem] w-full m-auto px-6 py-12 space-y-6">
-          
+        
+        <div className="max-w-[28rem] w-full m-auto px-6 py-12 space-y-8">
+          {/* Development Status Banner */}
+          <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-start gap-3">
+              <RocketIcon className="h-5 w-5 mt-0.5 text-blue-600 dark:text-blue-400" />
+              <div className="space-y-2 text-right">
+                <h3 className="font-medium text-blue-800 dark:text-blue-200">
+                  جاري التطوير حاليًا
+                </h3>
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  النظام في مرحلة التطوير النشط. يمكنك متابعة آخر التحديثات والتغييرات من خلال صفحة التحديثات.
+                </p>
+                <Button 
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                >
+                  <Link href={ensureLocalizedPathname("/pages/updates", locale)}>
+                    عرض التحديثات
+                    <RocketIcon className="h-4 w-4 mr-2" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {children}
           <OAuthButtons callbackUrl={'/sign-in'}/>
         </div>
       </div>
+
       {imgSrc && <AuthImage imgSrc={imgSrc} className={cn("", imgClassName)} />}
     </section>
   )
