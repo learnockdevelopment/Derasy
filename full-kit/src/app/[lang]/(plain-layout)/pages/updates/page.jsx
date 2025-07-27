@@ -22,7 +22,7 @@ export default function UpdateStatus() {
 
         const res = await fetch("/api/github-commits");
         setProgress(30);
-        
+        console.log('Response status:', res);
         if (!res.ok) {
           throw new Error('حدث خطأ أثناء جلب التحديثات');
         }
