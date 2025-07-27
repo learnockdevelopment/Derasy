@@ -1,5 +1,3 @@
-// File: /app/api/schools/my/[id]/card-request/route.js
-
 import { dbConnect } from '@/lib/dbConnect';
 import StudentIdCardRequest from '@/models/StudentCard';
 import { authenticate } from '@/middlewares/auth';
@@ -9,7 +7,7 @@ import School from '@/models/School';
 export async function POST(req, { params }) {
   try {
     console.log('📨 Incoming POST request to /api/schools/my/:id/card-request');
-console.log(req)
+
     await dbConnect();
     const user = await authenticate(req);
     if (!user || user.message) {
@@ -36,6 +34,23 @@ console.log(req)
       return NextResponse.json({ message: 'School not found' }, { status: 404 });
     }
 
+    // 🔍 Extract customId from fields if it exists
+    const customIdField = fields.find(f => f.key === 'customId');
+    const customId = customIdField?.value?.trim() || null;
+
+    // ✅ Validate customId against school's trusted IDs
+    if (school.trustedIds && Array.isArray(school.trustedIds)) {
+      if (customId && !school.trustedIds.includes(customId)) {
+        return NextResponse.json({
+          message: `The provided national ID (${customId}) is not authorized for this school.`,
+        }, { status: 403 });
+      }
+    }
+
+    // ❌ Remove customId field from fields array to avoid duplication
+    const filteredFields = fields.filter(f => f.key !== 'customId');
+
+    // 🔍 Extract photo file if a field has type "photo"
     const photoField = fields.find(f => f.key && f.type === 'photo');
     let photoFile = null;
 
@@ -44,13 +59,13 @@ console.log(req)
       console.log('📸 Received photo:', photoFile?.name);
     }
 
-    const photoUrl = null; // Future: Upload photo and store URL
-
+    // 📝 Create the card request document
     const cardRequest = new StudentIdCardRequest({
       school: schoolId,
       student: user.id,
-      fields,
-      photoUrl,
+      fields: filteredFields,
+      customId,
+      photoUrl: null, // TODO: Handle photo upload if needed
     });
 
     await cardRequest.save();
@@ -83,8 +98,8 @@ export async function GET(req, { params }) {
       school: schoolId,
       student: user.id,
     })
-      .populate('school') // Only fetch name and logo of the school
-      .populate('student') // Only fetch name and email of the student
+      .populate('school')
+      .populate('student')
       .sort({ createdAt: -1 });
 
     console.log(`📄 Found ${requests.length} card requests for student ${user.id}`);

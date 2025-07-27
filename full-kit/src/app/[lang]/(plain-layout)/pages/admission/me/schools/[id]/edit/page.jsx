@@ -171,6 +171,50 @@ export default function EditSchoolPage() {
             />
           </div>
         </div>
+        <div className="mb-6">
+          <label className="block mb-2 font-bold text-lg">🆔 أرقام الهوية الوطنية الموثوقة</label>
+
+          {school.trustedIds?.map((id, index) => (
+            <div key={index} className="flex items-center gap-2 mb-2">
+              <input
+                type="text"
+                value={id}
+                onChange={(e) => {
+                  const updatedIds = [...school.trustedIds];
+                  updatedIds[index] = e.target.value;
+                  setSchool({ ...school, trustedIds: updatedIds });
+                }}
+                className="flex-1 p-3 border rounded-lg border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const updatedIds = school.trustedIds.filter((_, i) => i !== index);
+                  setSchool({ ...school, trustedIds: updatedIds });
+                }}
+                className="text-red-500 hover:text-red-700 text-xl font-bold"
+                title="حذف"
+              >
+                🗑
+              </button>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={() =>
+              setSchool({
+                ...school,
+                trustedIds: [...(school.trustedIds || []), '']
+              })
+            }
+            className="mt-2 text-sm text-purple-700 hover:underline"
+          >
+            ➕ إضافة رقم هوية جديد
+          </button>
+        </div>
+
+
 
         <div className="mb-6">
           <label className="block mb-1 font-bold text-lg">🛡️ المشرفون (أسماء + إيميلات)</label>

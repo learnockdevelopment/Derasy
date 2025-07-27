@@ -89,6 +89,12 @@ const schoolSchema = new mongoose.Schema({
     min: Number,
     max: Number
   },
+  trustedIds: [{
+    type: String,
+    trim: true,
+    minlength: 10, // Optional: national ID in Egypt is usually 14 digits
+    maxlength: 20  // Allow a bit of flexibility
+  }],
 
   logoUrl: String,
   website: String,

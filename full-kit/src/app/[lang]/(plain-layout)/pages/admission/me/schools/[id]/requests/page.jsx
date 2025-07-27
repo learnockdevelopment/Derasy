@@ -9,10 +9,12 @@ import Swal from "sweetalert2"
 export default function StudentCardRequestsPage() {
   const { id } = useParams() // School ID
   const [requests, setRequests] = useState([])
+  const [filteredRequests, setFilteredRequests] = useState([])
   const [templateImage, setTemplateImage] = useState("")
   const [fieldsConfig, setFieldsConfig] = useState([])
-  const [summary, setSummary] = useState(null) // 🟢 تحليل البيانات
+  const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [statusFilter, setStatusFilter] = useState("all") // 🔵 فلتر الحالة
 
   useEffect(() => {
     if (!id) return
@@ -21,10 +23,8 @@ export default function StudentCardRequestsPage() {
       try {
         const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/)
         const token = match ? match[1] : null
-
         const headers = token ? { Authorization: `Bearer ${token}` } : {}
 
-        // 🟢 الطلب الرئيسي للطلبات
         const [reqRes, summaryRes] = await Promise.all([
           fetch(`/api/schools/my/${id}/card/request`, { headers }),
           fetch(`/api/schools/my/${id}/card/request/summary`, { headers }),
@@ -37,9 +37,10 @@ export default function StudentCardRequestsPage() {
         if (!summaryRes.ok) throw new Error(summaryData.message)
 
         setRequests(reqData.requests || [])
+        setFilteredRequests(reqData.requests || [])
         setFieldsConfig(reqData.fields || [])
         setTemplateImage(reqData?.school?.idCard?.url || "")
-        setSummary(summaryData.summary) // 🟢 حفظ التحليل
+        setSummary(summaryData.summary)
       } catch (err) {
         Swal.fire({ icon: "error", title: "خطأ", text: err.message })
       } finally {
@@ -50,10 +51,20 @@ export default function StudentCardRequestsPage() {
     fetchData()
   }, [id])
 
+  // 🔵 تصفية الطلبات حسب الحالة
+  useEffect(() => {
+    if (statusFilter === "all") {
+      setFilteredRequests(requests)
+    } else {
+      setFilteredRequests(requests.filter((r) => r.status === statusFilter))
+    }
+  }, [statusFilter, requests])
+
   if (loading) return <p className="text-center mt-10">جاري تحميل الطلبات...</p>
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
+
       {/* 🟢 قسم الإحصائيات */}
       {summary && (
         <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -80,12 +91,27 @@ export default function StudentCardRequestsPage() {
         </div>
       )}
 
+      {/* 🔵 شريط الفلترة */}
+      <div className="mb-6 flex items-center gap-4">
+        <label className="text-sm font-semibold">تصفية حسب الحالة:</label>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="border p-2 rounded-md"
+        >
+          <option value="all">الكل</option>
+          <option value="approved">تم القبول</option>
+          <option value="rejected">مرفوض</option>
+          <option value="pending">قيد المراجعة</option>
+        </select>
+      </div>
+
       {/* 🟢 عرض الطلبات */}
-      {requests.length === 0 ? (
-        <p className="text-center text-gray-600">لا توجد طلبات حالياً</p>
+      {filteredRequests.length === 0 ? (
+        <p className="text-center text-gray-600">لا توجد طلبات لهذه الحالة</p>
       ) : (
         <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {requests.map((req, idx) => (
+          {filteredRequests.map((req, idx) => (
             <Link
               href={`/pages/admission/me/schools/${req.school._id}/requests/${req._id}`}
               key={idx}
@@ -166,15 +192,15 @@ export default function StudentCardRequestsPage() {
                         req.status === "approved"
                           ? "bg-green-100 text-green-700"
                           : req.status === "rejected"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-gray-100 text-gray-700"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-gray-100 text-gray-700"
                       }`}
                   >
                     {req.status === "approved"
                       ? "تم القبول"
                       : req.status === "rejected"
-                        ? "مرفوض"
-                        : "قيد المراجعة"}
+                      ? "مرفوض"
+                      : "قيد المراجعة"}
                   </span>
                 </div>
               </div>

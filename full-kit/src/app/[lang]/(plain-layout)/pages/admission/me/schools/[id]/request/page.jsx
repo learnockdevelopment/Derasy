@@ -22,6 +22,7 @@ import {
   verifyOtp,
 } from "./apiService"
 import { getTokenFromCookie, isUserEmpty, setTokenCookie } from "./authUtils"
+import { type } from "os"
 
 export default function StudentCardRequestForm() {
   const { id } = useParams()
@@ -75,7 +76,7 @@ export default function StudentCardRequestForm() {
       await submitCardRequest(id, formData, token)
       showSuccess("تم الإرسال بنجاح", "تم إرسال طلب بطاقة الطالب.")
     } catch (err) {
-      showError("خطأ", "حدث خطأ أثناء إرسال الطلب")
+      showError("خطأ", err.message)
     }
   }
 
@@ -178,6 +179,11 @@ export default function StudentCardRequestForm() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
+              <FormField
+                  field={{type: "text", key: "customId", label: "رقم الهوية المخصص"}}
+                  value={formData["customId"]}
+                  onChange={handleChange}
+                />
               {fields.map((field, index) => (
                 <FormField
                   key={index}

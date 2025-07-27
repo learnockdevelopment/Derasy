@@ -5,18 +5,25 @@ import Image from "next/image"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import Swal from "sweetalert2"
-import { Download, IdCard } from "lucide-react"
+import { Download, IdCard, Filter, X } from "lucide-react"
 
 import { useUser } from "@/contexts/user-context"
 import BrandingBanner from "../../../../../../../components/branding-banner"
 
 export default function StudentCardRequestsPage() {
   const [requests, setRequests] = useState([])
+  const [filteredRequests, setFilteredRequests] = useState([])
   const [templateImage, setTemplateImage] = useState("")
   const [fieldsConfig, setFieldsConfig] = useState([])
   const [loading, setLoading] = useState(true)
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [schoolFilter, setSchoolFilter] = useState("all")
+  const [showFilters, setShowFilters] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  
   const user = useUser()
   const router = useRouter()
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -25,7 +32,6 @@ export default function StudentCardRequestsPage() {
 
         const headers = token ? { Authorization: `Bearer ${token}` } : {}
 
-        // 🟢 الطلب الرئيسي للطلبات
         const [reqRes] = await Promise.all([
           fetch(`/api/schools/my/cards`, { headers }),
         ])
@@ -35,6 +41,7 @@ export default function StudentCardRequestsPage() {
         if (!reqRes.ok) throw new Error(reqData.message)
 
         setRequests(reqData.requests || [])
+        setFilteredRequests(reqData.requests || [])
         setFieldsConfig(reqData.fields || [])
         setTemplateImage(reqData?.school?.idCard?.url || "")
       } catch (err) {
@@ -46,6 +53,55 @@ export default function StudentCardRequestsPage() {
 
     fetchData()
   }, [])
+
+  useEffect(() => {
+    applyFilters()
+  }, [statusFilter, schoolFilter, searchQuery, requests])
+
+  const applyFilters = () => {
+    let result = [...requests]
+
+    // Apply status filter
+    if (statusFilter !== "all") {
+      result = result.filter(req => req.status === statusFilter)
+    }
+
+    // Apply school filter
+    if (schoolFilter !== "all") {
+      result = result.filter(req => req.school._id === schoolFilter)
+    }
+
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter(req => 
+        req.student.name.toLowerCase().includes(query) ||
+        req.school.name.toLowerCase().includes(query) ||
+        req._id.toLowerCase().includes(query)
+      )
+    }
+
+    setFilteredRequests(result)
+  }
+
+  const resetFilters = () => {
+    setStatusFilter("all")
+    setSchoolFilter("all")
+    setSearchQuery("")
+    setFilteredRequests(requests)
+  }
+
+  // Calculate statistics
+  const stats = {
+    total: requests.length,
+    approved: requests.filter(req => req.status === "approved").length,
+    pending: requests.filter(req => req.status === "pending").length,
+    rejected: requests.filter(req => req.status === "rejected").length,
+    schools: [...new Set(requests.map(req => req.school._id))].length
+  }
+
+  // Get unique schools for filter dropdown
+  const uniqueSchools = [...new Set(requests.map(req => req.school))]
 
   if (loading) return <p className="text-center mt-10">جاري تحميل الطلبات...</p>
 
@@ -70,12 +126,137 @@ export default function StudentCardRequestsPage() {
           </button>
         }
       />
+
+      {/* 📊 Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
+          <h3 className="text-gray-500 text-sm font-medium">إجمالي الطلبات</h3>
+          <p className="text-2xl font-bold text-gray-800">{stats.total}</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow border border-green-100">
+          <h3 className="text-gray-500 text-sm font-medium">مقبولة</h3>
+          <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow border border-yellow-100">
+          <h3 className="text-gray-500 text-sm font-medium">قيد الانتظار</h3>
+          <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow border border-red-100">
+          <h3 className="text-gray-500 text-sm font-medium">مرفوضة</h3>
+          <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
+        </div>
+      </div>
+
+      {/* 🔍 Filters Section */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div className="relative w-full md:w-auto">
+            <input
+              type="text"
+              placeholder="ابحث عن طالب أو مدرسة..."
+              className="w-full md:w-64 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-200"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute left-3 top-2.5 text-gray-400 hover:text-gray-600"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+          
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            <Filter size={16} />
+            <span>تصفية النتائج</span>
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className="bg-white p-4 rounded-lg shadow border border-gray-200 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">حالة الطلب</label>
+                <select
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-200"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="all">الكل</option>
+                  <option value="pending">قيد الانتظار</option>
+                  <option value="approved">مقبولة</option>
+                  <option value="rejected">مرفوضة</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">المدرسة</label>
+                <select
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-200"
+                  value={schoolFilter}
+                  onChange={(e) => setSchoolFilter(e.target.value)}
+                >
+                  <option value="all">الكل</option>
+                  {uniqueSchools.map((school) => (
+                    <option key={school._id} value={school._id}>
+                      {school.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="flex items-end">
+                <button
+                  onClick={resetFilters}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                >
+                  إعادة تعيين
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 📝 Results Info */}
+      <div className="mb-4 flex justify-between items-center">
+        <p className="text-gray-600">
+          عرض <span className="font-bold">{filteredRequests.length}</span> من أصل <span className="font-bold">{requests.length}</span> طلب
+        </p>
+        {filteredRequests.length === 0 && requests.length > 0 && (
+          <button
+            onClick={resetFilters}
+            className="text-purple-600 hover:text-purple-800 text-sm flex items-center"
+          >
+            <X size={14} className="ml-1" />
+            مسح جميع الفلاتر
+          </button>
+        )}
+      </div>
+
       {/* 🟢 عرض الطلبات */}
-      {requests.length === 0 ? (
-        <p className="text-center text-gray-600">لا توجد طلبات حالياً</p>
+      {filteredRequests.length === 0 ? (
+        <div className="bg-white rounded-lg shadow p-8 text-center">
+          <p className="text-gray-600 mb-4">
+            {requests.length === 0 ? "لا توجد طلبات حالياً" : "لا توجد نتائج مطابقة للبحث"}
+          </p>
+          {requests.length > 0 && (
+            <button
+              onClick={resetFilters}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+            >
+              عرض جميع الطلبات
+            </button>
+          )}
+        </div>
       ) : (
         <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {requests.map((req, idx) => (
+          {filteredRequests.map((req, idx) => (
             <Link
               href={`/pages/admission/me/schools/${req.school._id}/requests/${req._id}`}
               key={idx}

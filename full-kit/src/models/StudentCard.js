@@ -17,7 +17,7 @@ const studentIdCardRequestSchema = new mongoose.Schema({
     required: true,
   },
   fields: [cardFieldValueSchema], // dynamic fields based on school.studentIdCardFields
-
+  customId: String,
   photoUrl: String,        // Optional: extracted if "photo" type is uploaded
   cardPreviewUrl: String,  // Optional: image preview URL after rendering
   status: {
