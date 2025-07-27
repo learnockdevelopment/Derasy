@@ -31,6 +31,7 @@ export default function UpdateStatus() {
         setProgress(60);
         
         const data = await res.json();
+        console.log('Fetched commits:', data);
         setProgress(80);
         setStatus('جاري عرض النتائج...');
 
