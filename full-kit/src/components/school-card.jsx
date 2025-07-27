@@ -109,7 +109,7 @@ export default function SchoolCard({ school }) {
         )}
 
         <Link
-          href={`/pages/admission/me/schools/${school._id}/student-id-card`}
+          href={`/pages/admission/me/schools/${school._id}/pvc-id-generator`}
           className="bg-yellow-400 text-yellow-900 p-3 rounded-full hover:bg-yellow-500 transition"
           aria-label="إعداد كارت الطالب"
           title="إعداد كارت الطالب"

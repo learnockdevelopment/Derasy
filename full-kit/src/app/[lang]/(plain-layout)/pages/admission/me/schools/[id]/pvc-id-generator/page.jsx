@@ -11,6 +11,7 @@ export default function EditSchoolCardFieldsPage() {
   const [studentIdCardFields, setFields] = useState([])
   const [loading, setLoading] = useState(true)
   const [template, setTemplate] = useState("")
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [cardDimensions, setCardDimensions] = useState({
     width: 350,
     height: 220,
@@ -34,7 +35,7 @@ export default function EditSchoolCardFieldsPage() {
           },
         }))
       )
-      setTemplate(data.school?.idCard.url || "")
+      setTemplate(data.school?.idCard?.url || "")
 
       // Set saved dimensions if they exist
       if (data.school?.idCard) {
@@ -247,78 +248,111 @@ export default function EditSchoolCardFieldsPage() {
         </div>
 
         {/* Template Upload */}
-        <div className="mb-8">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            خلفية البطاقة
-          </label>
-          <div className="flex items-center gap-4">
-            <label className="flex-1 cursor-pointer">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:bg-gray-50 transition-colors flex flex-col items-center justify-center">
-                <svg
-                  className="w-10 h-10 text-gray-400 mb-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  ></path>
-                </svg>
-                <span className="text-sm text-gray-500">
-                  اضغط لرفع صورة الخلفية
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0]
-                    if (!file) return
-
-                    const formData = new FormData()
-                    formData.append("file", file)
-
-                    const upload = await fetch(
-                      `/api/schools/my/${id}/template`,
-                      {
-                        method: "POST",
-                        body: formData,
-                      }
-                    )
-
-                    const result = await upload.json()
-                    if (upload.ok) {
-                      setTemplate(result.url)
-                      Swal.fire({
-                        icon: "success",
-                        title: "تم رفع الخلفية بنجاح",
-                      })
-                      fetchCardFields()
-                    } else {
-                      Swal.fire({
-                        icon: "error",
-                        title: "فشل الرفع",
-                        text: result.message,
-                      })
-                    }
-                  }}
-                  className="hidden"
-                />
-              </div>
-            </label>
-            {template && (
-              <div className="w-24 h-24 rounded-md overflow-hidden border border-gray-200 shadow-sm">
-                <img
-                  src={template}
-                  alt="Template Preview"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+       <div className="mb-8">
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    خلفية البطاقة
+  </label>
+  <div className="flex items-center gap-4">
+    <label className="flex-1 cursor-pointer">
+      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:bg-gray-50 transition-colors flex flex-col items-center justify-center relative">
+        {uploadProgress > 0 && uploadProgress < 100 && (
+          <div className="absolute top-0 left-0 right-0 bg-gray-200 h-2 rounded-t-lg">
+            <div 
+              className="bg-purple-600 h-full rounded-t-lg transition-all duration-300"
+              style={{ width: `${uploadProgress}%` }}
+            ></div>
           </div>
-        </div>
+        )}
+        <svg
+          className={`w-10 h-10 mb-2 ${uploadProgress > 0 ? 'text-purple-500' : 'text-gray-400'}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          ></path>
+        </svg>
+        <span className={`text-sm ${uploadProgress > 0 ? 'text-purple-600' : 'text-gray-500'}`}>
+          {uploadProgress > 0 ? 
+            `جاري الرفع... ${uploadProgress}%` : 
+            'اضغط لرفع صورة الخلفية'}
+        </span>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={async (e) => {
+            const file = e.target.files?.[0]
+            if (!file) return
+
+            // Reset progress
+            setUploadProgress(0)
+
+            const formData = new FormData()
+            formData.append("file", file)
+
+            try {
+              const xhr = new XMLHttpRequest()
+              
+              xhr.upload.addEventListener('progress', (event) => {
+                if (event.lengthComputable) {
+                  const percentComplete = Math.round((event.loaded / event.total) * 100)
+                  setUploadProgress(percentComplete)
+                }
+              })
+
+              xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                  if (xhr.status === 200) {
+                    const result = JSON.parse(xhr.responseText)
+                    setTemplate(result.url)
+                    setUploadProgress(0) // Reset progress bar
+                    Swal.fire({
+                      icon: "success",
+                      title: "تم رفع الخلفية بنجاح",
+                    })
+                    fetchCardFields()
+                  } else {
+                    setUploadProgress(0) // Reset progress bar on error
+                    Swal.fire({
+                      icon: "error",
+                      title: "فشل الرفع",
+                      text: xhr.statusText,
+                    })
+                  }
+                }
+              }
+
+              xhr.open('POST', `/api/schools/my/${id}/template`, true)
+              xhr.send(formData)
+
+            } catch (err) {
+              setUploadProgress(0)
+              Swal.fire({
+                icon: "error",
+                title: "فشل الرفع",
+                text: err.message,
+              })
+            }
+          }}
+          className="hidden"
+        />
+      </div>
+    </label>
+    {template && (
+      <div className="w-24 h-24 rounded-md overflow-hidden border border-gray-200 shadow-sm">
+        <img
+          src={template}
+          alt="Template Preview"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    )}
+  </div>
+</div>
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Preview Section */}
